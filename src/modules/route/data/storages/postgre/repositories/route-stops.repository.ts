@@ -91,7 +91,6 @@ export class PostgresRouteStopsRepository implements RouteStopsRepository {
       this.routeStopsRepo.create({
         ...data,
         id: routeStopId,
-        updatedAt: new Date(),
       }),
     );
   }

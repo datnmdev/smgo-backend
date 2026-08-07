@@ -5,9 +5,7 @@ import { RouteStopNotFoundException } from '../exceptions/route-stop-not-found.e
 
 @Injectable()
 export class UpdateRouteStopUsecase {
-  constructor(
-    private readonly routeStopsRepo: RouteStopsRepository
-  ) {}
+  constructor(private readonly routeStopsRepo: RouteStopsRepository) {}
 
   async execute(
     userId: string,
@@ -23,6 +21,15 @@ export class UpdateRouteStopUsecase {
     if (!routeStop) {
       throw new RouteStopNotFoundException();
     }
+    const now = new Date();
+    if (data.status === 'checked') {
+      data.checkedAt = now;
+    } else if (data.status === 'delivered') {
+      data.deliveredAt = now;
+    } else if (data.status === 'cancelled') {
+      data.cancelledAt = now;
+    }
+    data.updatedAt = now;
     await this.routeStopsRepo.update(routeStopId, data);
   }
 }

@@ -18,6 +18,13 @@ export class Routes {
   @Column('uuid', { name: 'user_id' })
   userId: string;
 
+  @Column('enum', {
+    name: 'status',
+    enum: ['pending', 'scheduled', 'in_progress', 'completed'],
+    default: () => "'pending'",
+  })
+  status: 'pending' | 'scheduled' | 'in_progress' | 'completed';
+
   @Column('timestamp with time zone', {
     name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',

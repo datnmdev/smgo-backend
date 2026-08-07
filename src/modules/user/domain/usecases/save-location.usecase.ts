@@ -5,9 +5,11 @@ import { SavedLocationsRepository } from '../repositories/saved-locations.reposi
 
 @Injectable()
 export class SaveLocationUsecase {
-  constructor(private readonly savedLocationsRepo: SavedLocationsRepository) {}
+  constructor(
+    private readonly savedLocationsRepo: SavedLocationsRepository
+  ) {}
 
-  execute(userId: string, data: SaveLocationData): Promise<SavedLocationModel> {
-    return this.savedLocationsRepo.create(userId, data);
+  execute(data: SaveLocationData): Promise<SavedLocationModel> {
+    return this.savedLocationsRepo.create(data);
   }
 }

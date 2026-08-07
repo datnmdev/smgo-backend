@@ -7,6 +7,7 @@ export interface FindRouteStopsByQuery {
 }
 
 export interface CreateRouteStopData {
+  orderMediaId?: string | null;
   orderCode: string;
   orderName?: string | null;
   contactName?: string | null;
@@ -21,14 +22,15 @@ export interface UpdateRouteStopData {
   orderCode?: string;
   orderName?: string | null;
   sequenceOrder?: number | null;
-  status?: 'pending' | 'delivered' | 'cancelled';
+  status?: 'pending' | 'checked' | 'delivered' | 'cancelled';
   contactName?: string | null;
   contactPhone?: string;
   address?: string;
   location?: Point | null;
   appliedLocation?: string | null;
   routeId?: string;
-  createdAt?: Date | null;
+  updatedAt?: Date;
+  checkedAt?: Date | null;
   deliveredAt?: Date | null;
   cancelledAt?: Date | null;
   deletedAt?: Date | null;

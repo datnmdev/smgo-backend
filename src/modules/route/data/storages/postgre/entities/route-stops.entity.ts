@@ -21,6 +21,9 @@ export class RouteStops {
   @Column('text', { name: 'order_code' })
   orderCode: string;
 
+  @Column('uuid', { name: 'order_media_id', nullable: true })
+  orderMediaId: string | null;
+
   @Column('text', { name: 'order_name', nullable: true })
   orderName: string | null;
 
@@ -29,10 +32,10 @@ export class RouteStops {
 
   @Column('enum', {
     name: 'status',
-    enum: ['pending', 'delivered', 'cancelled'],
+    enum: ['pending', 'checked', 'delivered', 'cancelled'],
     default: () => "'pending'",
   })
-  status: 'pending' | 'delivered' | 'cancelled';
+  status: 'pending' | 'checked' | 'delivered' | 'cancelled';
 
   @Column('text', { name: 'contact_name', nullable: true })
   contactName: string | null;
@@ -63,6 +66,9 @@ export class RouteStops {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @Column('timestamp with time zone', { name: 'checked_at', nullable: true })
+  checkedAt: Date | null;
 
   @Column('timestamp with time zone', { name: 'delivered_at', nullable: true })
   deliveredAt: Date | null;

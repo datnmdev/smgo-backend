@@ -5,9 +5,7 @@ import { RouteNotFoundException } from '../exceptions/route-not-found.exception'
 
 @Injectable()
 export class UpdateRouteUsecase {
-  constructor(
-    private readonly routesRepo: RoutesRepository
-  ) {}
+  constructor(private readonly routesRepo: RoutesRepository) {}
 
   async execute(
     userId: string,
@@ -23,6 +21,7 @@ export class UpdateRouteUsecase {
     if (!route) {
       throw new RouteNotFoundException();
     }
+    data.updatedAt = new Date();
     await this.routesRepo.update(routeId, data);
   }
 }

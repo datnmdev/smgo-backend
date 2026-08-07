@@ -11,6 +11,8 @@ export interface SavedLocationModel {
   address: string;
   location: Point | null;
   userId: string;
+  mediaIds: string[];
+  note: string | null;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;

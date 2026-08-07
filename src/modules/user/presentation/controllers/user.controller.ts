@@ -31,6 +31,7 @@ import {
 import { UpdateSavedLocationUsecase } from '../../domain/usecases/update-saved-location.usecase';
 import { DeleteSavedLocationParamsReqDto } from '../dtos/delete-saved-location.dto';
 import { DeleteSavedLocationUsecase } from '../../domain/usecases/delete-saved-location.usecase';
+import { SaveLocationData } from '@/@types/modules/user/domain/repositories/saved-locations.repository';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
@@ -77,12 +78,11 @@ export class UserController {
     @AuthPayload() authPayload: JwtPayload,
     @Body() saveLocationBody: SaveLocationBodyReqDto,
   ): Promise<AppResponse> {
-    return CAppResponse.ok(
-      await this.saveLocationUsecase.execute(
-        authPayload.userId,
-        saveLocationBody,
-      ),
-    );
+    const data: SaveLocationData = {
+      ...saveLocationBody,
+      userId: authPayload.userId,
+    };
+    return CAppResponse.ok(await this.saveLocationUsecase.execute(data));
   }
 
   @Put('saved-locations/:id')

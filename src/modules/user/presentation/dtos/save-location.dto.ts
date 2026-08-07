@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -33,6 +34,15 @@ export class SaveLocationBodyReqDto {
   @IsNotEmpty()
   @IsString()
   address: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  mediaIds?: string[];
+
+  @IsOptional()
+  @IsString()
+  note?: string;
 
   @IsOptional()
   @Type(() => Point)

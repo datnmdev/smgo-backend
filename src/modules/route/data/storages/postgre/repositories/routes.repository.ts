@@ -57,7 +57,12 @@ export class PostgresRoutesRepository implements RoutesRepository {
   }
 
   create(data: CreateRouteData): Promise<RouteModel> {
-    return this.routesRepo.save(this.routesRepo.create(data));
+    return this.routesRepo.save(
+      this.routesRepo.create({
+        ...data,
+        status: 'pending',
+      }),
+    );
   }
 
   update(routeId: string, data: UpdateRouteData): Promise<RouteModel> {
@@ -65,7 +70,6 @@ export class PostgresRoutesRepository implements RoutesRepository {
       this.routesRepo.create({
         ...data,
         id: routeId,
-        updatedAt: new Date(),
       }),
     );
   }

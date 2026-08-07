@@ -12,5 +12,7 @@ export interface CreateRouteData {
 
 export interface UpdateRouteData {
   name?: string;
-  deletedAt?: Date;
+  status?: 'pending' | 'scheduled' | 'in_progress' | 'completed';
+  updatedAt?: Date;
+  deletedAt?: Date | null;
 }

@@ -9,13 +9,9 @@ export abstract class SavedLocationsRepository {
   abstract findByQuery(
     query?: FindSavedLocationsByQuery,
   ): Promise<SavedLocationModel[]>;
-  abstract create(
-    userId: string,
-    data: SaveLocationData,
-  ): Promise<SavedLocationModel>;
+  abstract create(data: SaveLocationData): Promise<SavedLocationModel>;
   abstract update(
-    userId: string,
-    locationId: string,
+    savedLocationId: string,
     data: UpdateSavedLocationData,
   ): Promise<SavedLocationModel>;
 }

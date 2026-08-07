@@ -46,6 +46,12 @@ export class SavedLocations {
   @Column('character varying', { name: 'contact_phone', length: 50 })
   contactPhone: string;
 
+  @Column('uuid', { name: 'media_ids', array: true, default: () => "'{}'[]" })
+  mediaIds: string[];
+
+  @Column('text', { name: 'note', nullable: true })
+  note: string | null;
+
   @Column('tsvector', { name: 'search_vector', nullable: true, select: false })
   searchVector: string | null;
 

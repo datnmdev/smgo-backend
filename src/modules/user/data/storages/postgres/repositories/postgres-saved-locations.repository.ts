@@ -57,31 +57,28 @@ export class PostgresSavedLocationsRepository implements SavedLocationsRepositor
               userId: query.userId,
             });
           }
+          if (typeof query?.id === 'string') {
+            qb.andWhere('savedLocations.id = :id', {
+              id: query.id,
+            });
+          }
         }),
       )
       .getMany();
   }
 
-  create(userId: string, data: SaveLocationData): Promise<SavedLocationModel> {
-    return this.savedLocationsRepo.save(
-      this.savedLocationsRepo.create({
-        ...data,
-        userId,
-      }),
-    );
+  create(data: SaveLocationData): Promise<SavedLocationModel> {
+    return this.savedLocationsRepo.save(this.savedLocationsRepo.create(data));
   }
 
   update(
-    userId: string,
-    locationId: string,
+    savedLocationId: string,
     data: UpdateSavedLocationData,
   ): Promise<SavedLocationModel> {
     return this.savedLocationsRepo.save(
       this.savedLocationsRepo.create({
         ...data,
-        userId,
-        id: locationId,
-        updatedAt: new Date(),
+        id: savedLocationId,
       }),
     );
   }

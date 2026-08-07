@@ -8,6 +8,10 @@ export class CreateRouteStopParamsReqDto {
 }
 
 export class CreateRouteStopBodyReqDto {
+  @IsOptional()
+  @IsString()
+  orderMediaId?: string | null;
+
   @IsNotEmpty()
   @IsString()
   orderCode: string;
