@@ -17,4 +17,5 @@ export interface UpdateSavedLocationData {
   contactPhone?: string;
   address?: string;
   location?: Point;
+  deletedAt?: Date;
 }

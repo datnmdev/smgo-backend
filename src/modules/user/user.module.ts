@@ -12,6 +12,7 @@ import { PostgresSavedLocationsRepository } from './data/storages/postgres/repos
 import { GetSavedLocationsUsecase } from './domain/usecases/get-saved-locations.usecase';
 import { SaveLocationUsecase } from './domain/usecases/save-location.usecase';
 import { UpdateSavedLocationUsecase } from './domain/usecases/update-saved-location.usecase';
+import { DeleteSavedLocationUsecase } from './domain/usecases/delete-saved-location.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Users, SavedLocations])],
@@ -29,7 +30,8 @@ import { UpdateSavedLocationUsecase } from './domain/usecases/update-saved-locat
     GetUsersByQueryUsecase,
     GetSavedLocationsUsecase,
     SaveLocationUsecase,
-    UpdateSavedLocationUsecase
+    UpdateSavedLocationUsecase,
+    DeleteSavedLocationUsecase
   ],
   exports: [CreateUserUsecase, GetUsersByQueryUsecase],
 })

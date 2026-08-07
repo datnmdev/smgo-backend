@@ -78,6 +78,7 @@ export class PostgresSavedLocationsRepository implements SavedLocationsRepositor
         ...data,
         userId,
         id: locationId,
+        updatedAt: new Date(),
       }),
     );
   }

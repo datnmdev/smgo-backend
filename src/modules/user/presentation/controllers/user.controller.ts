@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '@/modules/auth/security/jwt-auth.guard';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -29,6 +30,8 @@ import {
   UpdateSavedLocationParamsReqDto,
 } from '../dtos/update-saved-location.dto';
 import { UpdateSavedLocationUsecase } from '../../domain/usecases/update-saved-location.usecase';
+import { DeleteSavedLocationParamsReqDto } from '../dtos/delete-saved-location.dto';
+import { DeleteSavedLocationUsecase } from '../../domain/usecases/delete-saved-location.usecase';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
@@ -38,6 +41,7 @@ export class UserController {
     private readonly getSavedLocationsUsecase: GetSavedLocationsUsecase,
     private readonly saveLocationUsecase: SaveLocationUsecase,
     private readonly updateSavedLocationUsecase: UpdateSavedLocationUsecase,
+    private readonly deleteSavedLocationUsecase: DeleteSavedLocationUsecase,
   ) {}
 
   @Get('profile')
@@ -88,12 +92,25 @@ export class UserController {
     @Param() updateSavedLocationParams: UpdateSavedLocationParamsReqDto,
 
     @Body() updateSavedLocationBody: UpdateSavedLocationBodyReqDto,
-  ): Promise<AppResponse> {
+  ): Promise<AppResponse<void>> {
     return CAppResponse.ok(
       await this.updateSavedLocationUsecase.execute(
         authPayload.userId,
         updateSavedLocationParams.id,
         updateSavedLocationBody,
+      ),
+    );
+  }
+
+  @Delete('saved-locations/:id')
+  async deleteSavedLocation(
+    @AuthPayload() authPayload: JwtPayload,
+    @Param() updateSavedLocationParams: DeleteSavedLocationParamsReqDto,
+  ): Promise<AppResponse<void>> {
+    return CAppResponse.ok(
+      await this.deleteSavedLocationUsecase.execute(
+        authPayload.userId,
+        updateSavedLocationParams.id,
       ),
     );
   }
