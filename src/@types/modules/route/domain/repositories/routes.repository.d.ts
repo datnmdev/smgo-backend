@@ -1,4 +1,5 @@
 export interface FindRoutesByQuery {
+  id?: string;
   keyword?: string;
   userId?: string;
   includeDeletedLocation?: boolean;
@@ -6,6 +7,7 @@ export interface FindRoutesByQuery {
 
 export interface CreateRouteData {
   name: string;
+  userId: string;
 }
 
 export interface UpdateRouteData {

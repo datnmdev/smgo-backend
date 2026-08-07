@@ -46,29 +46,24 @@ export class PostgresRoutesRepository implements RoutesRepository {
               userId: query.userId,
             });
           }
+          if (typeof query?.id === 'string') {
+            qb.andWhere('routes.id = :id', {
+              id: query.id,
+            });
+          }
         }),
       )
       .getMany();
   }
 
-  create(userId: string, data: CreateRouteData): Promise<RouteModel> {
-    return this.routesRepo.save(
-      this.routesRepo.create({
-        ...data,
-        userId,
-      }),
-    );
+  create(data: CreateRouteData): Promise<RouteModel> {
+    return this.routesRepo.save(this.routesRepo.create(data));
   }
 
-  update(
-    userId: string,
-    routeId: string,
-    data: UpdateRouteData,
-  ): Promise<RouteModel> {
+  update(routeId: string, data: UpdateRouteData): Promise<RouteModel> {
     return this.routesRepo.save(
       this.routesRepo.create({
         ...data,
-        userId,
         id: routeId,
         updatedAt: new Date(),
       }),

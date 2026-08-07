@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RoutesRepository } from '../repositories/routes.repository';
+import { RouteNotFoundException } from '../exceptions/route-not-found.exception';
 
 @Injectable()
 export class DeleteRouteUsecase {
@@ -8,7 +9,14 @@ export class DeleteRouteUsecase {
   ) {}
 
   async execute(userId: string, routeId: string): Promise<void> {
-    await this.routesRepo.update(userId, routeId, {
+    const route = (await this.routesRepo.findByQuery({
+      userId,
+      id: routeId
+    }))?.[0]
+    if (!route) {
+      throw new RouteNotFoundException();
+    }
+    await this.routesRepo.update(routeId, {
       deletedAt: new Date(),
     });
   }

@@ -9,6 +9,12 @@ import { PostgresRoutesRepository } from './data/storages/postgre/repositories/r
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Routes } from './data/storages/postgre/entities/routes.entity';
 import { RouteStops } from './data/storages/postgre/entities/route-stops.entity';
+import { GetRouteStopsUsecase } from './domain/usecases/get-route-stops.usecase';
+import { CreateRouteStopUsecase } from './domain/usecases/create-route-stop.usecase';
+import { UpdateRouteStopUsecase } from './domain/usecases/update-route-stop.usecase';
+import { DeleteRouteStopUsecase } from './domain/usecases/delete-route-stop.usecase';
+import { RouteStopsRepository } from './domain/repositories/route-stops.repository';
+import { PostgresRouteStopsRepository } from './data/storages/postgre/repositories/route-stops.repository';
 
 @Module({
   imports: [
@@ -24,12 +30,20 @@ import { RouteStops } from './data/storages/postgre/entities/route-stops.entity'
       provide: RoutesRepository,
       useClass: PostgresRoutesRepository,
     },
+    {
+      provide: RouteStopsRepository,
+      useClass: PostgresRouteStopsRepository,
+    },
 
     // Usecase
     GetRoutesUsecase,
     CreateRouteUsecase,
     UpdateRouteUsecase,
     DeleteRouteUsecase,
+    GetRouteStopsUsecase,
+    CreateRouteStopUsecase,
+    UpdateRouteStopUsecase,
+    DeleteRouteStopUsecase
   ],
   exports: [],
 })

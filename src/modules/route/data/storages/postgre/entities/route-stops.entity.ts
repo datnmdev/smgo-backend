@@ -24,8 +24,8 @@ export class RouteStops {
   @Column('text', { name: 'order_name', nullable: true })
   orderName: string | null;
 
-  @Column('integer', { name: 'sequence_order', unique: true })
-  sequenceOrder: number;
+  @Column('integer', { name: 'sequence_order', unique: true, nullable: true })
+  sequenceOrder: number | null;
 
   @Column('enum', {
     name: 'status',
@@ -49,8 +49,20 @@ export class RouteStops {
   @Column('uuid', { name: 'route_id', unique: true })
   routeId: string;
 
-  @Column('timestamp with time zone', { name: 'started_at', nullable: true })
-  startedAt: Date | null;
+  @Column('uuid', { name: 'applied_location', nullable: true })
+  appliedLocation: string | null;
+
+  @Column('timestamp with time zone', {
+    name: 'created_at',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
+
+  @Column('timestamp with time zone', {
+    name: 'updated_at',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
 
   @Column('timestamp with time zone', { name: 'delivered_at', nullable: true })
   deliveredAt: Date | null;

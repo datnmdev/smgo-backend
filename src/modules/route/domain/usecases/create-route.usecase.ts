@@ -9,7 +9,7 @@ export class CreateRouteUsecase {
     private readonly routesRepo: RoutesRepository
   ) {}
 
-  execute(userId: string, data: CreateRouteData): Promise<RouteModel> {
-    return this.routesRepo.create(userId, data);
+  execute(data: CreateRouteData): Promise<RouteModel> {
+    return this.routesRepo.create(data);
   }
 }
