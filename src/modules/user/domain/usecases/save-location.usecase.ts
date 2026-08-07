@@ -8,6 +8,6 @@ export class SaveLocationUsecase {
   constructor(private readonly savedLocationsRepo: SavedLocationsRepository) {}
 
   execute(userId: string, data: SaveLocationData): Promise<SavedLocationModel> {
-    return this.savedLocationsRepo.saveLocation(userId, data);
+    return this.savedLocationsRepo.create(userId, data);
   }
 }

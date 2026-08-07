@@ -1,7 +1,16 @@
 import { AppResponse } from '@/@types/core/class/response';
 import { UserModel } from '@/@types/modules/user/domain/models/user';
 import { JwtAuthGuard } from '@/modules/auth/security/jwt-auth.guard';
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AppResponse as CAppResponse } from '@/core/class/response.class';
 import { GetUsersByQueryUsecase } from '../../domain/usecases/get-users-by-query.usecase';
 import { AuthPayload } from '@/core/decorators/auth-payload.decorator';
@@ -15,6 +24,11 @@ import _ from 'lodash';
 import { plainToInstance } from 'class-transformer';
 import { SaveLocationBodyReqDto } from '../dtos/save-location.dto';
 import { SaveLocationUsecase } from '../../domain/usecases/save-location.usecase';
+import {
+  UpdateSavedLocationBodyReqDto,
+  UpdateSavedLocationParamsReqDto,
+} from '../dtos/update-saved-location.dto';
+import { UpdateSavedLocationUsecase } from '../../domain/usecases/update-saved-location.usecase';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
@@ -22,7 +36,8 @@ export class UserController {
   constructor(
     private readonly getUsersByQueryUsecase: GetUsersByQueryUsecase,
     private readonly getSavedLocationsUsecase: GetSavedLocationsUsecase,
-    private readonly saveLocationUsecase: SaveLocationUsecase
+    private readonly saveLocationUsecase: SaveLocationUsecase,
+    private readonly updateSavedLocationUsecase: UpdateSavedLocationUsecase,
   ) {}
 
   @Get('profile')
@@ -63,6 +78,22 @@ export class UserController {
       await this.saveLocationUsecase.execute(
         authPayload.userId,
         saveLocationBody,
+      ),
+    );
+  }
+
+  @Put('saved-locations/:id')
+  async updateSavedLocation(
+    @AuthPayload() authPayload: JwtPayload,
+    @Param() updateSavedLocationParams: UpdateSavedLocationParamsReqDto,
+
+    @Body() updateSavedLocationBody: UpdateSavedLocationBodyReqDto,
+  ): Promise<AppResponse> {
+    return CAppResponse.ok(
+      await this.updateSavedLocationUsecase.execute(
+        authPayload.userId,
+        updateSavedLocationParams.id,
+        updateSavedLocationBody,
       ),
     );
   }

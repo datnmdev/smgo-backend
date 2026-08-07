@@ -6,6 +6,7 @@ import { SavedLocationModel } from '@/@types/modules/user/domain/models/saved-lo
 import {
   FindSavedLocationsByQuery,
   SaveLocationData,
+  UpdateSavedLocationData,
 } from '@/@types/modules/user/domain/repositories/saved-locations';
 import { SavedLocations } from '../entities/saved-locations.entity';
 
@@ -58,14 +59,25 @@ export class PostgresSavedLocationsRepository implements SavedLocationsRepositor
       .getMany();
   }
 
-  saveLocation(
+  create(userId: string, data: SaveLocationData): Promise<SavedLocationModel> {
+    return this.savedLocationsRepo.save(
+      this.savedLocationsRepo.create({
+        ...data,
+        userId,
+      }),
+    );
+  }
+
+  update(
     userId: string,
-    data: SaveLocationData,
+    locationId: string,
+    data: UpdateSavedLocationData,
   ): Promise<SavedLocationModel> {
     return this.savedLocationsRepo.save(
       this.savedLocationsRepo.create({
         ...data,
         userId,
+        id: locationId,
       }),
     );
   }
