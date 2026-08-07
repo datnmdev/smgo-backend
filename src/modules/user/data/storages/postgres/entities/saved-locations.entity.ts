@@ -1,5 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Users } from './users.entity';
+import { Point } from '@/@types/modules/user/domain/models/saved-location';
 
 @Index('saved_locations_pkey', ['id'], { unique: true })
 @Index('idx_saved_locations__search_vector', ['searchVector'], {})
@@ -22,7 +23,10 @@ export class SavedLocations {
   address: string;
 
   @Column('point', { name: 'location', nullable: true })
-  location: string | object | null;
+  location: Point | null;
+
+  @Column('uuid', { name: 'user_id' })
+  userId: string;
 
   @Column('timestamp with time zone', {
     name: 'created_at',

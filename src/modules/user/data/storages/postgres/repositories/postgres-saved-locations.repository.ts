@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { SavedLocationsRepository } from '@/modules/user/domain/repositories/saved-locations.repository';
 import { SavedLocationModel } from '@/@types/modules/user/domain/models/saved-location';
-import { FindSavedLocationsByQuery } from '@/@types/modules/user/domain/repositories/saved-locations';
+import {
+  FindSavedLocationsByQuery,
+  SaveLocationData,
+} from '@/@types/modules/user/domain/repositories/saved-locations';
 import { SavedLocations } from '../entities/saved-locations.entity';
 
 @Injectable()
@@ -53,5 +56,17 @@ export class PostgresSavedLocationsRepository implements SavedLocationsRepositor
         }),
       )
       .getMany();
+  }
+
+  saveLocation(
+    userId: string,
+    data: SaveLocationData,
+  ): Promise<SavedLocationModel> {
+    return this.savedLocationsRepo.save(
+      this.savedLocationsRepo.create({
+        ...data,
+        userId,
+      }),
+    );
   }
 }

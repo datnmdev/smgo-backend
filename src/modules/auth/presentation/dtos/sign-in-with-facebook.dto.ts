@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class SignInWithFacebookBodyDto {
+export class SignInWithFacebookBodyReqDto {
   @IsNotEmpty()
   @IsString()
   inputToken: string;

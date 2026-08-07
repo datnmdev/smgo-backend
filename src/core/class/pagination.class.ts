@@ -1,14 +1,18 @@
-import { IsInt, Min, IsNotEmpty } from 'class-validator';
+import { IsInt, Min, IsOptional, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class PaginationReq {
   @IsNotEmpty()
+  @Type(() => Boolean)
+  withPagination: boolean = true;
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)
   page: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)

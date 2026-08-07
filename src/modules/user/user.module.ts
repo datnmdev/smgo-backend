@@ -10,6 +10,7 @@ import { UserController } from './presentation/controllers/user.controller';
 import { SavedLocationsRepository } from './domain/repositories/saved-locations.repository';
 import { PostgresSavedLocationsRepository } from './data/storages/postgres/repositories/postgres-saved-locations.repository';
 import { GetSavedLocationsUsecase } from './domain/usecases/get-saved-locations.usecase';
+import { SaveLocationUsecase } from './domain/usecases/save-location.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Users, SavedLocations])],
@@ -25,7 +26,8 @@ import { GetSavedLocationsUsecase } from './domain/usecases/get-saved-locations.
     },
     CreateUserUsecase,
     GetUsersByQueryUsecase,
-    GetSavedLocationsUsecase
+    GetSavedLocationsUsecase,
+    SaveLocationUsecase
   ],
   exports: [CreateUserUsecase, GetUsersByQueryUsecase],
 })

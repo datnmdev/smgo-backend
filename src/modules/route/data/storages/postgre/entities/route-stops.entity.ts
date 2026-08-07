@@ -1,5 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Routes } from './routes.entity';
+import { Point } from '@/@types/modules/user/domain/models/saved-location';
 
 @Index('route_stops_pkey', ['id'], { unique: true })
 @Index(
@@ -43,7 +44,7 @@ export class RouteStops {
   address: string;
 
   @Column('point', { name: 'location', nullable: true })
-  location: string | object | null;
+  location: Point | null;
 
   @Column('uuid', { name: 'route_id', unique: true })
   routeId: string;

@@ -1,6 +1,6 @@
 import { IsJWT, IsNotEmpty } from 'class-validator';
 
-export class RefreshTokenBodyDto {
+export class RefreshTokenBodyReqDto {
   @IsNotEmpty()
   @IsJWT()
   refreshToken: string;

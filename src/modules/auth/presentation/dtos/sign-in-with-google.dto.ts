@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class SignInWithGoogleBodyDto {
+export class SignInWithGoogleBodyReqDto {
   @IsNotEmpty()
   @IsString()
   idToken: string;
