@@ -7,6 +7,7 @@ import { Routes } from './routes.entity';
   ['routeId', 'sequenceOrder'],
   { unique: true },
 )
+@Index('idx_route_stops__search_vector', ['searchVector'], {})
 @Entity('route_stops', { schema: 'public' })
 export class RouteStops {
   @Column('uuid', {
@@ -58,6 +59,9 @@ export class RouteStops {
 
   @Column('timestamp with time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
+
+  @Column('tsvector', { name: 'search_vector', nullable: true, select: false })
+  searchVector: string | null;
 
   @ManyToOne(() => Routes, (routes) => routes.routeStops)
   @JoinColumn([{ name: 'route_id', referencedColumnName: 'id' }])

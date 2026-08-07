@@ -1,13 +1,8 @@
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Users } from './users.entity';
 
 @Index('saved_locations_pkey', ['id'], { unique: true })
+@Index('idx_saved_locations__search_vector', ['searchVector'], {})
 @Entity('saved_locations', { schema: 'public' })
 export class SavedLocations {
   @Column('uuid', {
@@ -22,9 +17,6 @@ export class SavedLocations {
 
   @Column('text', { name: 'contact_name' })
   contactName: string;
-
-  @Column('varchar', { name: 'contact_phone' })
-  contactPhone: string;
 
   @Column('text', { name: 'address' })
   address: string;
@@ -46,6 +38,12 @@ export class SavedLocations {
 
   @Column('timestamp with time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
+
+  @Column('character varying', { name: 'contact_phone', length: 50 })
+  contactPhone: string;
+
+  @Column('tsvector', { name: 'search_vector', nullable: true, select: false })
+  searchVector: string | null;
 
   @ManyToOne(() => Users, (users) => users.savedLocations)
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])

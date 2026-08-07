@@ -2,6 +2,7 @@ import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { RouteStops } from './route-stops.entity';
 
 @Index('routes_pkey', ['id'], { unique: true })
+@Index('idx_routes__search_vector', ['searchVector'], {})
 @Entity('routes', { schema: 'public' })
 export class Routes {
   @Column('uuid', {
@@ -28,6 +29,9 @@ export class Routes {
 
   @Column('timestamp with time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
+
+  @Column('tsvector', { name: 'search_vector', nullable: true, select: false })
+  searchVector: string | null;
 
   @OneToMany(() => RouteStops, (routeStops) => routeStops.route)
   routeStops: RouteStops[];

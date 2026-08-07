@@ -31,7 +31,7 @@ export class RefreshTokenUsecase {
 
     // Kiểm tra session
     const session = await this.sessionRepo.findByIdAndUserId(
-      tokenPayload.id,
+      tokenPayload.userId,
       tokenPayload.sessionId,
     );
     if (!session) {
@@ -49,7 +49,7 @@ export class RefreshTokenUsecase {
     const sessionId = v4();
     const now = Date.now();
     const newPayload: JwtPayload = {
-      id: tokenPayload.id,
+      userId: tokenPayload.userId,
       sessionId,
     };
     const newTokens = await this.tokenProvider.generateTokens(newPayload);

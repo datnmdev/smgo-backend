@@ -43,7 +43,7 @@ import { JwtStrategy } from './security/jwt.strategy';
     SignInWithFacebookUsecase,
     SignOutUsecase,
     RefreshTokenUsecase,
-    IsBlacklistedUsecase
+    IsBlacklistedUsecase,
   ],
 })
 export class AuthModule {}

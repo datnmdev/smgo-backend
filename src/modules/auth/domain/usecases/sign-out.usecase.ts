@@ -22,6 +22,6 @@ export class SignOutUsecase {
         remainingAccessTtl,
       );
     }
-    await this.sessionRepo.delete(authPayload.id, authPayload.sessionId);
+    await this.sessionRepo.delete(authPayload.userId, authPayload.sessionId);
   }
 }

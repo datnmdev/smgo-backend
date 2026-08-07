@@ -92,7 +92,7 @@ export class SignInWithFacebookUsecase {
         // Tạo token
         const sessionId = v4();
         const tokenPayload: JwtPayload = {
-          id: user.id,
+          userId: user.id,
           sessionId,
         };
         const tokens = await this.tokenProvider.generateTokens(tokenPayload);

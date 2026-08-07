@@ -6,7 +6,7 @@ import { UserModel } from '@/@types/modules/user/domain/models/user';
 import {
   CreateUserData,
   FindUsersByQuery,
-} from '@/@types/modules/user/domain/repositories/user-repository';
+} from '@/@types/modules/user/domain/repositories/users-repository';
 import { UsersRepository } from '@/modules/user/domain/repositories/users.repository';
 
 @Injectable()

@@ -7,6 +7,9 @@ import { SavedLocations } from './data/storages/postgres/entities/saved-location
 import { PostgresUsersRepository } from './data/storages/postgres/repositories/postgres-users.repository';
 import { UsersRepository } from './domain/repositories/users.repository';
 import { UserController } from './presentation/controllers/user.controller';
+import { SavedLocationsRepository } from './domain/repositories/saved-locations.repository';
+import { PostgresSavedLocationsRepository } from './data/storages/postgres/repositories/postgres-saved-locations.repository';
+import { GetSavedLocationsUsecase } from './domain/usecases/get-saved-locations.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Users, SavedLocations])],
@@ -16,8 +19,13 @@ import { UserController } from './presentation/controllers/user.controller';
       provide: UsersRepository,
       useClass: PostgresUsersRepository,
     },
+    {
+      provide: SavedLocationsRepository,
+      useClass: PostgresSavedLocationsRepository,
+    },
     CreateUserUsecase,
     GetUsersByQueryUsecase,
+    GetSavedLocationsUsecase
   ],
   exports: [CreateUserUsecase, GetUsersByQueryUsecase],
 })

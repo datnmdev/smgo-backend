@@ -11,12 +11,6 @@ export class Users {
   })
   id: string;
 
-  @Column('varchar', { name: 'name' })
-  name: string;
-
-  @Column('varchar', { name: 'uuid', nullable: true })
-  uuid: string;
-
   @Column('enum', {
     name: 'provider',
     nullable: true,
@@ -29,6 +23,12 @@ export class Users {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
+
+  @Column('character varying', { name: 'name', length: 255 })
+  name: string;
+
+  @Column('character varying', { name: 'uuid', nullable: true, length: 50 })
+  uuid: string | null;
 
   @OneToMany(() => SavedLocations, (savedLocations) => savedLocations.user)
   savedLocations: SavedLocations[];
