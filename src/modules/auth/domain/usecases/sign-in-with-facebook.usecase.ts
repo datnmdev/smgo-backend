@@ -1,4 +1,5 @@
 import { JwtPayload, JwtTokens } from '@/@types/jwt';
+import { ConfigService } from '@/core/config/config.service';
 import { ORMType } from '@/core/enum/unit-of-work.enum';
 import {
   transactionStorage,
@@ -7,56 +8,82 @@ import {
 import { CreateUserUsecase } from '@/modules/user/domain/usecases/create-user.usecase';
 import { GetUsersByQueryUsecase } from '@/modules/user/domain/usecases/get-users-by-query.usecase';
 import { Injectable } from '@nestjs/common';
-import { OAuth2Client } from 'google-auth-library';
 import { v4 } from 'uuid';
-import { InvalidGoogleTokenException } from '../exceptions/invalid-google-token.exception';
-import { ConfigService } from '@/core/config/config.service';
+import ky from 'ky';
+import { InvalidFacebookTokenException } from '../exceptions/invalid-facebook-token.exception';
 import { TokenProvider } from '../services/token-provider.service';
+import { SessionRepository } from '../repositories/session.repository';
 import {
   DeviceInfo,
   Session,
 } from '@/@types/modules/auth/domain/repositories/session.repository';
-import { SessionRepository } from '../repositories/session.repository';
 import dfns from 'date-fns';
 
 @Injectable()
-export class SignInWithGoogleUsecase {
+export class SignInWithFacebookUsecase {
   constructor(
+    private readonly configService: ConfigService,
     private readonly uowService: UnitOfWorkService,
     private readonly getUsersByQuery: GetUsersByQueryUsecase,
     private readonly createUserUsecase: CreateUserUsecase,
-    private readonly configService: ConfigService,
     private readonly tokenProvider: TokenProvider,
     private readonly sessionRepo: SessionRepository,
   ) {}
 
-  async execute(idToken: string, deviceInfo: DeviceInfo): Promise<JwtTokens> {
+  async execute(
+    inputToken: string,
+    deviceInfo: DeviceInfo,
+  ): Promise<JwtTokens> {
     const uowManager = await this.uowService.create(ORMType.TYPEORM);
     return transactionStorage.run(uowManager, async () => {
       try {
         await this.uowService.start();
-        const client = new OAuth2Client(
-          this.configService.getGoogleOAuthConfig().clientId,
-        );
-        const ticket = await client.verifyIdToken({
-          idToken,
-          audience: this.configService.getGoogleOAuthConfig().clientId,
-        });
-        const payload = ticket.getPayload();
+        // Validate token
+        const appToken = [
+          this.configService.getFacebookOAuthConfig().appId,
+          this.configService.getFacebookOAuthConfig().appSecret,
+        ].join('|');
+        const debugRes = await ky
+          .get('https://graph.facebook.com/debug_token', {
+            searchParams: {
+              input_token: inputToken,
+              access_token: appToken,
+            },
+          })
+          .json<any>();
+        if (!debugRes?.data?.is_valid) {
+          throw new InvalidFacebookTokenException();
+        }
+        if (
+          debugRes.data.app_id !==
+          this.configService.getFacebookOAuthConfig().appId
+        ) {
+          throw new InvalidFacebookTokenException();
+        }
+        const profile = await ky
+          .get('https://graph.facebook.com/me', {
+            searchParams: {
+              fields: 'id,name,picture',
+            },
+            headers: {
+              Authorization: `Bearer ${inputToken}`,
+            },
+          })
+          .json<any>();
 
         // Tạo tài khoản mới nếu chưa đăng nhập lần nào
         let user = (
           await this.getUsersByQuery.execute({
-            provider: 'google',
-            uuid: payload.sub,
+            provider: 'facebook',
+            uuid: profile.id,
           })
         )?.[0];
         if (!user) {
           user = await this.createUserUsecase.execute(
             {
-              name: payload.name,
-              uuid: payload.sub,
-              provider: 'google',
+              name: profile.name,
+              uuid: profile.id,
+              provider: 'facebook',
             },
             uowManager.manager,
           );
@@ -94,7 +121,7 @@ export class SignInWithGoogleUsecase {
         return tokens;
       } catch (error) {
         await this.uowService.rollback();
-        throw new InvalidGoogleTokenException();
+        throw new InvalidFacebookTokenException();
       } finally {
         await this.uowService.release();
       }

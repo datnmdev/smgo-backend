@@ -1,11 +1,11 @@
 export interface JwtPayload {
   id: string;
+  sessionId: string;
   iat?: number;
   exp?: number;
-  jti?: string;
 }
 
-export interface JwtToken {
+export interface JwtTokens {
   accessToken: string;
   refreshToken: string;
 }

@@ -1,18 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import {
-  RedisTokenRepository,
-  TokenRepository,
-} from '../repositories/token.repository';
-import { InjectRepository } from '@/core/decorators/inject-repository.decorator';
+import { TokenBlacklistRepository } from '../repositories/token-blacklist.repository';
+import { TokenProvider } from '../services/token-provider.service';
 
 @Injectable()
 export class IsBlacklistedUsecase {
   constructor(
-    @InjectRepository(RedisTokenRepository)
-    private readonly tokenRepo: TokenRepository,
+    private readonly tokenBlacklistRepo: TokenBlacklistRepository,
+    private readonly tokenProvider: TokenProvider,
   ) {}
 
-  execute(jti: string): Promise<boolean> {
-    return this.tokenRepo.isBlacklisted(jti);
+  async execute(token: string): Promise<boolean> {
+    const tokenPayload = await this.tokenProvider.decode(token);
+    return this.tokenBlacklistRepo.isBlacklisted(tokenPayload.sessionId);
   }
 }

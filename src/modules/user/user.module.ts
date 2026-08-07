@@ -4,15 +4,15 @@ import { GetUsersByQueryUsecase } from './domain/usecases/get-users-by-query.use
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './data/storages/postgres/entities/users.entity';
 import { SavedLocations } from './data/storages/postgres/entities/saved-locations.entity';
-import { getRepositoryToken } from '@/core/decorators/inject-repository.decorator';
 import { PostgresUsersRepository } from './data/storages/postgres/repositories/postgres-users.repository';
+import { UsersRepository } from './domain/repositories/users.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Users, SavedLocations])],
   controllers: [],
   providers: [
     {
-      provide: getRepositoryToken(PostgresUsersRepository),
+      provide: UsersRepository,
       useClass: PostgresUsersRepository,
     },
     CreateUserUsecase,
