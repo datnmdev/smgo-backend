@@ -1,6 +1,7 @@
 export interface FindSavedLocationsByQuery {
   keyword?: string;
   userId?: string;
+  includeDeletedLocation?: boolean;
 }
 
 export interface SaveLocationData {

@@ -1,5 +1,5 @@
 import { SavedLocationModel } from "@/@types/modules/user/domain/models/saved-location";
-import { FindSavedLocationsByQuery } from "@/@types/modules/user/domain/repositories/saved-locations";
+import { FindSavedLocationsByQuery } from "@/@types/modules/user/domain/repositories/saved-locations.repository";
 import { Injectable } from "@nestjs/common";
 import { SavedLocationsRepository } from "../repositories/saved-locations.repository";
 

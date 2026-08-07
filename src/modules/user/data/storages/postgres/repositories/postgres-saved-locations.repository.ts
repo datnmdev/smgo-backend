@@ -7,7 +7,7 @@ import {
   FindSavedLocationsByQuery,
   SaveLocationData,
   UpdateSavedLocationData,
-} from '@/@types/modules/user/domain/repositories/saved-locations';
+} from '@/@types/modules/user/domain/repositories/saved-locations.repository';
 import { SavedLocations } from '../entities/saved-locations.entity';
 
 @Injectable()
@@ -24,6 +24,9 @@ export class PostgresSavedLocationsRepository implements SavedLocationsRepositor
       .createQueryBuilder('savedLocations')
       .where(
         new Brackets((qb) => {
+          if (!query?.includeDeletedLocation) {
+            qb.andWhere('savedLocations.deletedAt IS NULL');
+          }
           if (typeof query?.keyword === 'string') {
             qb.andWhere(
               new Brackets((qb) => {

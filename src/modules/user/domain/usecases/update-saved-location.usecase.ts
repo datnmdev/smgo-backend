@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SavedLocationsRepository } from '../repositories/saved-locations.repository';
-import { UpdateSavedLocationData } from '@/@types/modules/user/domain/repositories/saved-locations';
+import { UpdateSavedLocationData } from '@/@types/modules/user/domain/repositories/saved-locations.repository';
 
 @Injectable()
 export class UpdateSavedLocationUsecase {

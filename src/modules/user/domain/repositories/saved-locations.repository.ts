@@ -3,7 +3,7 @@ import {
   FindSavedLocationsByQuery,
   SaveLocationData,
   UpdateSavedLocationData,
-} from '@/@types/modules/user/domain/repositories/saved-locations';
+} from '@/@types/modules/user/domain/repositories/saved-locations.repository';
 
 export abstract class SavedLocationsRepository {
   abstract findByQuery(

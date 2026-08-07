@@ -1,20 +1,15 @@
-import { Point } from '@/@types/modules/user/domain/models/saved-location';
 import { Exclude } from 'class-transformer';
 import { IsOptional, IsString } from 'class-validator';
 
-export class GetSavedLocationsQueryReqDto {
+export class GetRoutesQueryReqDto {
   @IsOptional()
   @IsString()
   keyword: string;
 }
 
-export class GetSavedLocationsResDto {
+export class GetRoutesResDto {
   id: string;
   name: string;
-  contactName: string;
-  contactPhone: string;
-  address: string;
-  location: Point | null;
   createdAt: Date;
   updatedAt: Date;
 

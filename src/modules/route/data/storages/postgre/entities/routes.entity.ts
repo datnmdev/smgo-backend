@@ -15,6 +15,9 @@ export class Routes {
   @Column('text', { name: 'name' })
   name: string;
 
+  @Column('uuid', { name: 'user_id' })
+  userId: string;
+
   @Column('timestamp with time zone', {
     name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',

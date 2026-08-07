@@ -21,7 +21,6 @@ import {
   GetSavedLocationsQueryReqDto,
 } from '../dtos/get-saved-locations.dto';
 import { GetSavedLocationsUsecase } from '../../domain/usecases/get-saved-locations.usecase';
-import _ from 'lodash';
 import { plainToInstance } from 'class-transformer';
 import { SaveLocationBodyReqDto } from '../dtos/save-location.dto';
 import { SaveLocationUsecase } from '../../domain/usecases/save-location.usecase';
