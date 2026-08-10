@@ -50,7 +50,7 @@ export class SignInWithFacebookUsecase {
               access_token: appToken,
             },
           })
-          .json<any>();
+          .json<any>();        
         if (!debugRes?.data?.is_valid) {
           throw new InvalidFacebookTokenException();
         }
@@ -119,7 +119,7 @@ export class SignInWithFacebookUsecase {
         );
         await this.uowService.commit();
         return tokens;
-      } catch (error) {
+      } catch (error) {        
         await this.uowService.rollback();
         throw new InvalidFacebookTokenException();
       } finally {

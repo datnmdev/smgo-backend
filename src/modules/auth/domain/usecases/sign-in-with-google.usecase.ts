@@ -40,7 +40,7 @@ export class SignInWithGoogleUsecase {
         );
         const ticket = await client.verifyIdToken({
           idToken,
-          audience: this.configService.getGoogleOAuthConfig().clientId,
+          audience: [this.configService.getGoogleOAuthConfig().clientId],
         });
         const payload = ticket.getPayload();
 
@@ -54,7 +54,7 @@ export class SignInWithGoogleUsecase {
         if (!user) {
           user = await this.createUserUsecase.execute(
             {
-              name: payload.name,
+              name: payload.family_name + ' ' + payload.given_name,
               uuid: payload.sub,
               provider: 'google',
             },
