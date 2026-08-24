@@ -1,6 +1,4 @@
-import { AppResponse } from '@/@types/core/class/response';
-import { UserModel } from '@/@types/modules/user/domain/models/user';
-import { JwtAuthGuard } from '@/modules/auth/security/jwt-auth.guard';
+import { JwtAuthGuard } from '@/core/security/jwt-auth.guard';
 import {
   Body,
   Controller,
@@ -12,104 +10,105 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { AppResponse as CAppResponse } from '@/core/class/response.class';
-import { GetUsersByQueryUsecase } from '../../domain/usecases/get-users-by-query.usecase';
+import { AppResponse } from '@/core/common/response.dto';
 import { AuthPayload } from '@/core/decorators/auth-payload.decorator';
-import { JwtPayload } from '@/@types/jwt';
 import {
-  GetSavedLocationsResDto,
-  GetSavedLocationsQueryReqDto,
-} from '../dtos/get-saved-locations.dto';
-import { GetSavedLocationsUsecase } from '../../domain/usecases/get-saved-locations.usecase';
-import { plainToInstance } from 'class-transformer';
-import { SaveLocationBodyReqDto } from '../dtos/save-location.dto';
-import { SaveLocationUsecase } from '../../domain/usecases/save-location.usecase';
+  UpdateLocationBodyReqDto,
+  UpdateLocationParamsReqDto,
+} from '../dtos/update-location.dto';
+import { GetUsersUsecase } from '../../domain/usecases/get-users.usecase';
 import {
-  UpdateSavedLocationBodyReqDto,
-  UpdateSavedLocationParamsReqDto,
-} from '../dtos/update-saved-location.dto';
-import { UpdateSavedLocationUsecase } from '../../domain/usecases/update-saved-location.usecase';
-import { DeleteSavedLocationParamsReqDto } from '../dtos/delete-saved-location.dto';
-import { DeleteSavedLocationUsecase } from '../../domain/usecases/delete-saved-location.usecase';
-import { SaveLocationData } from '@/@types/modules/user/domain/repositories/saved-locations.repository';
+  GetLocationsUsecase,
+  TLocationWithMedia,
+} from '../../domain/usecases/get-locations.usecase';
+import { CreateLocationUsecase } from '../../domain/usecases/create-location.usecase';
+import { UpdateLocationUsecase } from '../../domain/usecases/update-location.usecase';
+import { DeleteLocationUsecase } from '../../domain/usecases/delete-location.usecase';
+import { JwtPayload } from '@/core/security/jwt.strategy';
+import { TUser } from '../../domain/entities/user.entity';
+import { TPaginationResponse } from '@/core/common/pagination.entity';
+import { GetLocationsQueryReqDto } from '../dtos/get-locations.dto';
+import { CreateLocationBodyReqDto } from '../dtos/create-location.dto';
+import { TLocation } from '../../domain/entities/location.entity';
+import { CreateLocationData } from '../../domain/repositories/location.repository';
+import { DeleteLocationParamsReqDto } from '../dtos/delete-location.dto';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(
-    private readonly getUsersByQueryUsecase: GetUsersByQueryUsecase,
-    private readonly getSavedLocationsUsecase: GetSavedLocationsUsecase,
-    private readonly saveLocationUsecase: SaveLocationUsecase,
-    private readonly updateSavedLocationUsecase: UpdateSavedLocationUsecase,
-    private readonly deleteSavedLocationUsecase: DeleteSavedLocationUsecase,
+    private readonly getUsersUsecase: GetUsersUsecase,
+    private readonly getLocationsUsecase: GetLocationsUsecase,
+    private readonly createLocationUsecase: CreateLocationUsecase,
+    private readonly updateLocationUsecase: UpdateLocationUsecase,
+    private readonly deleteLocationUsecase: DeleteLocationUsecase,
   ) {}
 
   @Get('profile')
   async getProfile(
     @AuthPayload() authPayload: JwtPayload,
-  ): Promise<AppResponse<UserModel>> {
-    return CAppResponse.ok(
+  ): Promise<AppResponse<TUser>> {
+    return AppResponse.ok(
       (
-        await this.getUsersByQueryUsecase.execute({
+        await this.getUsersUsecase.execute({
           id: authPayload.userId,
         })
       )[0],
     );
   }
 
-  @Get('saved-locations')
-  async getSavedLocations(
+  @Get('locations')
+  async getLocations(
     @AuthPayload() authPayload: JwtPayload,
-    @Query() getSavedLocationsQuery: GetSavedLocationsQueryReqDto,
-  ): Promise<AppResponse<UserModel>> {
-    return CAppResponse.ok(
-      plainToInstance(
-        GetSavedLocationsResDto,
-        await this.getSavedLocationsUsecase.execute({
-          keyword: getSavedLocationsQuery.keyword,
-          userId: authPayload.userId,
-        }),
-      ),
+    @Query() getLocationsQuery: GetLocationsQueryReqDto,
+  ): Promise<AppResponse<TPaginationResponse<TLocationWithMedia>>> {
+    return AppResponse.ok(
+      await this.getLocationsUsecase.execute({
+        keyword: getLocationsQuery.keyword,
+        id: getLocationsQuery.id,
+        userId: authPayload.userId,
+        pageNumber: getLocationsQuery.pageNumber,
+        pageSize: getLocationsQuery.pageSize,
+      }),
     );
   }
 
-  @Post('saved-locations')
-  async saveLocation(
+  @Post('locations')
+  async createLocation(
     @AuthPayload() authPayload: JwtPayload,
-    @Body() saveLocationBody: SaveLocationBodyReqDto,
-  ): Promise<AppResponse> {
-    const data: SaveLocationData = {
-      ...saveLocationBody,
+    @Body() createLocationBody: CreateLocationBodyReqDto,
+  ): Promise<AppResponse<TLocation>> {
+    const data: CreateLocationData = {
+      ...createLocationBody,
       userId: authPayload.userId,
     };
-    return CAppResponse.ok(await this.saveLocationUsecase.execute(data));
+    return AppResponse.ok(await this.createLocationUsecase.execute(data));
   }
 
-  @Put('saved-locations/:id')
-  async updateSavedLocation(
+  @Put('locations/:id')
+  async updateLocation(
     @AuthPayload() authPayload: JwtPayload,
-    @Param() updateSavedLocationParams: UpdateSavedLocationParamsReqDto,
-
-    @Body() updateSavedLocationBody: UpdateSavedLocationBodyReqDto,
+    @Param() updateLocationParamsReqDto: UpdateLocationParamsReqDto,
+    @Body() updateLocationBodyReqDto: UpdateLocationBodyReqDto,
   ): Promise<AppResponse<void>> {
-    return CAppResponse.ok(
-      await this.updateSavedLocationUsecase.execute(
+    return AppResponse.ok(
+      await this.updateLocationUsecase.execute(
         authPayload.userId,
-        updateSavedLocationParams.id,
-        updateSavedLocationBody,
+        updateLocationParamsReqDto.id,
+        updateLocationBodyReqDto,
       ),
     );
   }
 
-  @Delete('saved-locations/:id')
-  async deleteSavedLocation(
+  @Delete('locations/:id')
+  async deleteLocation(
     @AuthPayload() authPayload: JwtPayload,
-    @Param() updateSavedLocationParams: DeleteSavedLocationParamsReqDto,
+    @Param() updateLocationParams: DeleteLocationParamsReqDto,
   ): Promise<AppResponse<void>> {
-    return CAppResponse.ok(
-      await this.deleteSavedLocationUsecase.execute(
+    return AppResponse.ok(
+      await this.deleteLocationUsecase.execute(
         authPayload.userId,
-        updateSavedLocationParams.id,
+        updateLocationParams.id,
       ),
     );
   }

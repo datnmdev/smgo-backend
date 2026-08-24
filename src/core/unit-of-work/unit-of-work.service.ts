@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { AsyncLocalStorage } from 'async_hooks';
-import {
-  IUnitOfWork,
-  UnitOfWorkManager,
-} from '@/@types/core/unit-of-work/unit-of-work.service';
-import { ORMType } from '../enum/unit-of-work.enum';
 
 export const transactionStorage = new AsyncLocalStorage<UnitOfWorkManager>();
 
@@ -77,4 +72,23 @@ export class UnitOfWorkService implements IUnitOfWork {
       await (uowManager.manager as QueryRunner).release();
     }
   }
+}
+
+export enum ORMType {
+  TYPEORM = 'TYPEORM',
+}
+
+
+export interface UnitOfWorkManager {
+  type: ORMType;
+  manager: any;
+}
+
+export interface IUnitOfWork {
+  start(): Promise<void>;
+  commit(): Promise<void>;
+  rollback(): Promise<void>;
+  release(): Promise<void>;
+  getManager(): UnitOfWorkManager;
+  create(type: ORMType): Promise<UnitOfWorkManager>;
 }

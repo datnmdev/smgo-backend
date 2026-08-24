@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { TokenProvider } from '../../domain/services/token-provider.service';
-import { JwtPayload, JwtTokens } from '@/@types/jwt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@/core/config/config.service';
-import { v4 } from 'uuid';
 import bcrypt from 'bcrypt';
+import { JwtPayload, JwtTokens } from '@/core/security/jwt.strategy';
 
 @Injectable()
 export class TokenProviderImpl implements TokenProvider {
@@ -13,19 +12,16 @@ export class TokenProviderImpl implements TokenProvider {
     private readonly configService: ConfigService,
   ) {}
   async generateTokens(payload: JwtPayload): Promise<JwtTokens> {
-    const jwtid = v4();
     const tokens: JwtTokens = {
       accessToken: await this.jwtService.signAsync(payload, {
         secret: this.configService.getJwtConfig().jwtSecret,
         algorithm: 'HS256',
         expiresIn: '2d',
-        jwtid,
       }),
       refreshToken: await this.jwtService.signAsync(payload, {
         secret: this.configService.getJwtConfig().jwtSecret,
         algorithm: 'HS256',
         expiresIn: '30d',
-        jwtid,
       }),
     };
     return tokens;

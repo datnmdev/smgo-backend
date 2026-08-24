@@ -1,8 +1,5 @@
-import { RedisModuleOptions } from '@nestjs-modules/ioredis';
 import { Injectable } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
-import { TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
-import { RedisOptions } from 'ioredis';
 
 @Injectable()
 export class ConfigService {
@@ -14,22 +11,20 @@ export class ConfigService {
     };
   }
 
-  getPostgreSQLConfig(): TypeOrmModuleAsyncOptions {
+  getPostgreSQLConfig() {
     return {
-      useFactory: () => ({
-        type: 'postgres',
-        host: this.nestConfigService.get('DB_HOST'),
-        port: Number(this.nestConfigService.get('DB_PORT')),
-        username: this.nestConfigService.get('DB_USER'),
-        password: this.nestConfigService.get('DB_PASS'),
-        database: this.nestConfigService.get('DB_NAME'),
-        entities: ['dist/**/entities/*.{ts,js}'],
-        synchronize: false,
-      }),
+      type: 'postgres',
+      host: this.nestConfigService.get('DB_HOST'),
+      port: Number(this.nestConfigService.get('DB_PORT')),
+      username: this.nestConfigService.get('DB_USER'),
+      password: this.nestConfigService.get('DB_PASS'),
+      database: this.nestConfigService.get('DB_NAME'),
+      entities: ['dist/**/models/*.{ts,js}'],
+      synchronize: false,
     };
   }
 
-  getRedisConfig(): RedisModuleOptions {
+  getRedisConfig() {
     return {
       type: 'single',
       url: `redis://:${this.nestConfigService.get('REDIS_PASS')}@${this.nestConfigService.get('REDIS_HOST')}:${Number(this.nestConfigService.get('REDIS_PORT'))}`,
@@ -46,6 +41,26 @@ export class ConfigService {
     return {
       appId: this.nestConfigService.get('FACEBOOK_APP_ID'),
       appSecret: this.nestConfigService.get('FACEBOOK_APP_SECRET'),
+    };
+  }
+
+  getMinioConfig() {
+    return {
+      endPoint: this.nestConfigService.get('MINIO_ENDPOINT'),
+      port: Number(this.nestConfigService.get('MINIO_PORT')),
+      useSSL: false,
+      accessKey: this.nestConfigService.get('MINIO_ACCESS_KEY'),
+      secretKey: this.nestConfigService.get('MINIO_SECRET_KEY'),
+      bucket: this.nestConfigService.get('MINIO_BUCKET'),
+      region: this.nestConfigService.get('MINIO_REGION'),
+    };
+  }
+
+  getAiConfig() {
+    return {
+      llama: {
+        url: this.nestConfigService.get('LLAMA_URL'),
+      },
     };
   }
 }

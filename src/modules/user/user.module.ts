@@ -1,38 +1,45 @@
 import { Module } from '@nestjs/common';
 import { CreateUserUsecase } from './domain/usecases/create-user.usecase';
-import { GetUsersByQueryUsecase } from './domain/usecases/get-users-by-query.usecase';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from './data/storages/postgres/entities/users.entity';
-import { SavedLocations } from './data/storages/postgres/entities/saved-locations.entity';
-import { PostgresUsersRepository } from './data/storages/postgres/repositories/postgres-users.repository';
-import { UsersRepository } from './domain/repositories/users.repository';
 import { UserController } from './presentation/controllers/user.controller';
-import { SavedLocationsRepository } from './domain/repositories/saved-locations.repository';
-import { PostgresSavedLocationsRepository } from './data/storages/postgres/repositories/postgres-saved-locations.repository';
-import { GetSavedLocationsUsecase } from './domain/usecases/get-saved-locations.usecase';
-import { SaveLocationUsecase } from './domain/usecases/save-location.usecase';
-import { UpdateSavedLocationUsecase } from './domain/usecases/update-saved-location.usecase';
-import { DeleteSavedLocationUsecase } from './domain/usecases/delete-saved-location.usecase';
+import { LocationRepository } from './domain/repositories/location.repository';
+import { StorageModule } from '../storage/storage.module';
+import { UserModel } from './data/models/user.model';
+import { LocationModel } from './data/models/location.model';
+import { UserRepository } from './domain/repositories/user.repository';
+import { UserRepositoryImpl } from './data/repositories/user.repository.impl';
+import { LocationRepositoryImpl } from './data/repositories/location.repository.impl';
+import { GetUsersUsecase } from './domain/usecases/get-users.usecase';
+import { GetLocationsUsecase } from './domain/usecases/get-locations.usecase';
+import { CreateLocationUsecase } from './domain/usecases/create-location.usecase';
+import { UpdateLocationUsecase } from './domain/usecases/update-location.usecase';
+import { DeleteLocationUsecase } from './domain/usecases/delete-location.usecase';
+import { LocationController } from './presentation/controllers/location.controller';
+import { GetLocationSuggestionUsecase } from './domain/usecases/get-location-sugesstions.usecase';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Users, SavedLocations])],
-  controllers: [UserController],
+  imports: [
+    TypeOrmModule.forFeature([UserModel, LocationModel]),
+    StorageModule,
+  ],
+  controllers: [UserController, LocationController],
   providers: [
     {
-      provide: UsersRepository,
-      useClass: PostgresUsersRepository,
+      provide: UserRepository,
+      useClass: UserRepositoryImpl,
     },
     {
-      provide: SavedLocationsRepository,
-      useClass: PostgresSavedLocationsRepository,
+      provide: LocationRepository,
+      useClass: LocationRepositoryImpl,
     },
     CreateUserUsecase,
-    GetUsersByQueryUsecase,
-    GetSavedLocationsUsecase,
-    SaveLocationUsecase,
-    UpdateSavedLocationUsecase,
-    DeleteSavedLocationUsecase
+    GetUsersUsecase,
+    GetLocationsUsecase,
+    CreateLocationUsecase,
+    UpdateLocationUsecase,
+    DeleteLocationUsecase,
+    GetLocationSuggestionUsecase
   ],
-  exports: [CreateUserUsecase, GetUsersByQueryUsecase],
+  exports: [CreateUserUsecase, GetUsersUsecase],
 })
 export class UserModule {}

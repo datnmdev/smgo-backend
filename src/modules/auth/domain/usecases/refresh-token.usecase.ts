@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { SessionRepository } from '../repositories/session.repository';
+import { DeviceInfo, Session, SessionRepository } from '../repositories/session.repository';
 import { TokenProvider } from '../services/token-provider.service';
-import { JwtPayload, JwtTokens } from '@/@types/jwt';
 import { InvalidRefreshTokenException } from '../exceptions/invalid-refresh-token.exception';
 import { v4 } from 'uuid';
-import {
-  DeviceInfo,
-  Session,
-} from '@/@types/modules/auth/domain/repositories/session.repository';
 import dfns from 'date-fns';
+import { JwtPayload, JwtTokens } from '@/core/security/jwt.strategy';
 
 @Injectable()
 export class RefreshTokenUsecase {

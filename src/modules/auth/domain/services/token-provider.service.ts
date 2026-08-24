@@ -1,4 +1,4 @@
-import { JwtPayload, JwtTokens } from '@/@types/jwt';
+import { JwtPayload, JwtTokens } from "@/core/security/jwt.strategy";
 
 export abstract class TokenProvider {
   abstract generateTokens(payload: JwtPayload): Promise<JwtTokens>;

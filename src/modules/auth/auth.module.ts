@@ -8,14 +8,14 @@ import { ConfigModule } from '@/core/config/config.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SignOutUsecase } from './domain/usecases/sign-out.usecase';
 import { TokenBlacklistRepository } from './domain/repositories/token-blacklist.repository';
-import { RedisTokenBlacklistRepository } from './data/storages/redis/repositories/token-blacklist.repository';
 import { TokenProvider } from './domain/services/token-provider.service';
 import { TokenProviderImpl } from './data/services/token-provider';
 import { SessionRepository } from './domain/repositories/session.repository';
-import { RedisSessionRepository } from './data/storages/redis/repositories/session.repository';
 import { RefreshTokenUsecase } from './domain/usecases/refresh-token.usecase';
 import { IsBlacklistedUsecase } from './domain/usecases/is-blacklisted.usecase';
-import { JwtStrategy } from './security/jwt.strategy';
+import { JwtStrategy } from '../../core/security/jwt.strategy';
+import { TokenBlacklistRepositoryImpl } from './data/repositories/token-blacklist.repository.impl';
+import { SessionRepositoryImpl } from './data/repositories/session.repository.impl';
 
 @Module({
   imports: [UserModule, UnitOfWorkModule, ConfigModule, JwtModule],
@@ -27,7 +27,7 @@ import { JwtStrategy } from './security/jwt.strategy';
     // Repositories
     {
       provide: TokenBlacklistRepository,
-      useClass: RedisTokenBlacklistRepository,
+      useClass: TokenBlacklistRepositoryImpl,
     },
     {
       provide: TokenProvider,
@@ -35,7 +35,7 @@ import { JwtStrategy } from './security/jwt.strategy';
     },
     {
       provide: SessionRepository,
-      useClass: RedisSessionRepository,
+      useClass: SessionRepositoryImpl,
     },
 
     // Usecases

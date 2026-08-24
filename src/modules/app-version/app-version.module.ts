@@ -1,27 +1,21 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { AppVersions } from "./data/storage/postgres/entities/app-versions.entity";
-import { AppVersionsRepository } from "./domain/repositories/app-versions.repository";
-import { PostgresAppVersionsRepository } from "./data/storage/postgres/repositories/postgres-app-versions.repository";
-import { GetLatestAppVersionUsecase } from "./domain/usecases/get-latest-app-version.usecase";
-import { AppVersionController } from "./presentation/controllers/app-version.controller";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { GetLatestAppVersionUsecase } from './domain/usecases/get-latest-app-version.usecase';
+import { AppVersionController } from './presentation/controllers/app-version.controller';
+import { AppVersionRepository } from './domain/repositories/app-version.repository';
+import { AppVersionRepositoryImpl } from './data/repositories/app-version.repository.impl';
+import { AppVersionModel } from './data/models/app-version.model';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      AppVersions
-    ])
-  ],
-  controllers: [
-    AppVersionController
-  ],
+  imports: [TypeOrmModule.forFeature([AppVersionModel])],
+  controllers: [AppVersionController],
   providers: [
     // Repositories
     {
-      provide: AppVersionsRepository,
-      useClass: PostgresAppVersionsRepository
+      provide: AppVersionRepository,
+      useClass: AppVersionRepositoryImpl,
     },
-    GetLatestAppVersionUsecase
-  ]
+    GetLatestAppVersionUsecase,
+  ],
 })
 export class AppVersionModule {}

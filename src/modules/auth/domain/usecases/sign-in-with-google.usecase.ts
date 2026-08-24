@@ -1,11 +1,9 @@
-import { JwtPayload, JwtTokens } from '@/@types/jwt';
-import { ORMType } from '@/core/enum/unit-of-work.enum';
 import {
+  ORMType,
   transactionStorage,
   UnitOfWorkService,
 } from '@/core/unit-of-work/unit-of-work.service';
 import { CreateUserUsecase } from '@/modules/user/domain/usecases/create-user.usecase';
-import { GetUsersByQueryUsecase } from '@/modules/user/domain/usecases/get-users-by-query.usecase';
 import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { v4 } from 'uuid';
@@ -15,15 +13,17 @@ import { TokenProvider } from '../services/token-provider.service';
 import {
   DeviceInfo,
   Session,
-} from '@/@types/modules/auth/domain/repositories/session.repository';
-import { SessionRepository } from '../repositories/session.repository';
+  SessionRepository,
+} from '../repositories/session.repository';
 import dfns from 'date-fns';
+import { GetUsersUsecase } from '@/modules/user/domain/usecases/get-users.usecase';
+import { JwtPayload, JwtTokens } from '@/core/security/jwt.strategy';
 
 @Injectable()
 export class SignInWithGoogleUsecase {
   constructor(
     private readonly uowService: UnitOfWorkService,
-    private readonly getUsersByQuery: GetUsersByQueryUsecase,
+    private readonly getUsersUsecase: GetUsersUsecase,
     private readonly createUserUsecase: CreateUserUsecase,
     private readonly configService: ConfigService,
     private readonly tokenProvider: TokenProvider,
@@ -46,7 +46,7 @@ export class SignInWithGoogleUsecase {
 
         // Tạo tài khoản mới nếu chưa đăng nhập lần nào
         let user = (
-          await this.getUsersByQuery.execute({
+          await this.getUsersUsecase.execute({
             provider: 'google',
             uuid: payload.sub,
           })

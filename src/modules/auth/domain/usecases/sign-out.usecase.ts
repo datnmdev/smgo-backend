@@ -1,8 +1,8 @@
-import { JwtPayload } from '@/@types/jwt';
 import { Injectable } from '@nestjs/common';
 import { SessionRepository } from '../repositories/session.repository';
 import dfns from 'date-fns';
 import { TokenBlacklistRepository } from '../repositories/token-blacklist.repository';
+import { JwtPayload } from '@/core/security/jwt.strategy';
 
 @Injectable()
 export class SignOutUsecase {
