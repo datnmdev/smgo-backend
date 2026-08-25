@@ -18,7 +18,6 @@ import { UpdateDeliveryRouteUsecase } from '../../domain/usecases/update-deliver
 import { DeleteDeliveryRouteUsecase } from '../../domain/usecases/delete-delivery-route.usecase';
 import { CreateDeliveryOrderUsecase } from '../../domain/usecases/create-delivery-order.usecase';
 import { UpdateDeliveryOrderUsecase } from '../../domain/usecases/update-delivery-order.usecase';
-import { DeleteDeliveryOrderUsecase } from '../../domain/usecases/delete-delivery-order.usecase';
 import { JwtPayload } from '@/core/security/jwt.strategy';
 import { GetDeliveryRoutesQueryReqDto } from '../dtos/get-delivery-routes.dto';
 import { CreateDeliveryRouteBodyReqDto } from '../dtos/create-delivery-route.dto';
@@ -35,7 +34,21 @@ import {
   UpdateDeliveryOrderBodyReqDto,
   UpdateDeliveryOrderParamsReqDto,
 } from '../dtos/update-delivery-order.dto';
-import { DeleteDeliveryOrderParamsReqDto } from '../dtos/delete-delivery-order.dto';
+import {
+  DeleteDeliveryOrdersBodyReqDto,
+  DeleteDeliveryOrdersParamsReqDto,
+} from '../dtos/delete-delivery-orders.dto';
+import { RecheckDeliveryOrdersUsecase } from '../../domain/usecases/recheck-delivery-orders.usecase';
+import {
+  RecheckDeliveryOrdersBodyReqDto,
+  RecheckDeliveryOrdersParamsReqDto,
+} from '../dtos/recheck-delivery-orders.dto';
+import {
+  ConfirmDeliveryOrdersBodyReqDto,
+  ConfirmDeliveryOrdersParamsReqDto,
+} from '../dtos/confirm-delivery-orders.dto';
+import { ConfirmDeliveryOrdersUsecase } from '../../domain/usecases/confirm_delivery_orders.usecase';
+import { DeleteDeliveryOrdersUsecase } from '../../domain/usecases/delete_delivery_orders.usecase';
 
 @Controller('delivery-route')
 @UseGuards(JwtAuthGuard)
@@ -47,7 +60,9 @@ export class DeliveryRouteController {
     private readonly deleteDeliveryRouteUsecase: DeleteDeliveryRouteUsecase,
     private readonly createDeliveryOrderUsecase: CreateDeliveryOrderUsecase,
     private readonly updateDeliveryOrderUsecase: UpdateDeliveryOrderUsecase,
-    private readonly deleteDeliveryOrderUsecase: DeleteDeliveryOrderUsecase,
+    private readonly deleteDeliveryOrdersUsecase: DeleteDeliveryOrdersUsecase,
+    private readonly recheckDeliveryOrdersUsecase: RecheckDeliveryOrdersUsecase,
+    private readonly confirmDeliveryOrdersUsecase: ConfirmDeliveryOrdersUsecase,
   ) {}
 
   @Get()
@@ -138,16 +153,51 @@ export class DeliveryRouteController {
     );
   }
 
-  @Delete(':deliveryRouteId/delivery-order/:deliveryOrderId')
-  async deleteDeliveryOrder(
+  @Put(':deliveryRouteId/delivery-order/m/recheck')
+  async recheckDeliveryOrders(
     @AuthPayload() authPayload: JwtPayload,
-    @Param() deleteDeliveryOrderParams: DeleteDeliveryOrderParamsReqDto,
+    @Param()
+    recheckDeliveryOrdersParams: RecheckDeliveryOrdersParamsReqDto,
+    @Body()
+    recheckDeliveryOrdersBody: RecheckDeliveryOrdersBodyReqDto,
   ): Promise<AppResponse<void>> {
     return AppResponse.ok(
-      await this.deleteDeliveryOrderUsecase.execute(
+      await this.recheckDeliveryOrdersUsecase.execute(
         authPayload.userId,
-        deleteDeliveryOrderParams.deliveryRouteId,
-        deleteDeliveryOrderParams.deliveryOrderId,
+        recheckDeliveryOrdersParams.deliveryRouteId,
+        recheckDeliveryOrdersBody.deliveryOrderIds,
+      ),
+    );
+  }
+
+  @Put(':deliveryRouteId/delivery-order/m/confirm')
+  async confirmDeliveryOrders(
+    @AuthPayload() authPayload: JwtPayload,
+    @Param()
+    confirmDeliveryOrdersParams: ConfirmDeliveryOrdersParamsReqDto,
+    @Body()
+    confirmDeliveryOrdersBody: ConfirmDeliveryOrdersBodyReqDto,
+  ): Promise<AppResponse<void>> {
+    return AppResponse.ok(
+      await this.confirmDeliveryOrdersUsecase.execute(
+        authPayload.userId,
+        confirmDeliveryOrdersParams.deliveryRouteId,
+        confirmDeliveryOrdersBody.deliveryOrderIds,
+      ),
+    );
+  }
+
+  @Delete(':deliveryRouteId/delivery-order/m')
+  async deleteDeliveryOrders(
+    @AuthPayload() authPayload: JwtPayload,
+    @Param() deleteDeliveryOrdersParams: DeleteDeliveryOrdersParamsReqDto,
+    @Body() deleteDeliveryOrdersBody: DeleteDeliveryOrdersBodyReqDto,
+  ): Promise<AppResponse<void>> {
+    return AppResponse.ok(
+      await this.deleteDeliveryOrdersUsecase.execute(
+        authPayload.userId,
+        deleteDeliveryOrdersParams.deliveryRouteId,
+        deleteDeliveryOrdersBody.deliveryOrderIds,
       ),
     );
   }

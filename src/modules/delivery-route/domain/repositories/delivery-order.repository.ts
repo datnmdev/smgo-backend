@@ -12,11 +12,13 @@ export abstract class DeliveryOrderRepository {
   abstract update(
     deliveryOrderId: string,
     data: UpdateDeliveryOrderData,
+    manager?: any
   ): Promise<TDeliveryOrder>;
   abstract countByStatus(status: DeliveryOrderStatus): Promise<number>;
 }
 
 export interface FindDeliveryOrdersByQuery {
+  ids?: string[];
   id?: string;
   keyword?: string;
   deliveryRouteId?: string;

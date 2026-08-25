@@ -14,13 +14,17 @@ import { CreateDeliveryRouteUsecase } from './domain/usecases/create-delivery-ro
 import { GetDeliveryOrdersUsecase } from './domain/usecases/get-delivery-orders.usecase';
 import { CreateDeliveryOrderUsecase } from './domain/usecases/create-delivery-order.usecase';
 import { UpdateDeliveryOrderUsecase } from './domain/usecases/update-delivery-order.usecase';
-import { DeleteDeliveryOrderUsecase } from './domain/usecases/delete-delivery-order.usecase';
 import { StorageModule } from '../storage/storage.module';
+import { RecheckDeliveryOrdersUsecase } from './domain/usecases/recheck-delivery-orders.usecase';
+import { UnitOfWorkModule } from '@/core/unit-of-work/unit-of-work.module';
+import { ConfirmDeliveryOrdersUsecase } from './domain/usecases/confirm_delivery_orders.usecase';
+import { DeleteDeliveryOrdersUsecase } from './domain/usecases/delete_delivery_orders.usecase';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([DeliveryRouteModel, DeliveryOrderModel]),
     StorageModule,
+    UnitOfWorkModule
   ],
   controllers: [DeliveryRouteController],
   providers: [
@@ -42,7 +46,9 @@ import { StorageModule } from '../storage/storage.module';
     GetDeliveryOrdersUsecase,
     CreateDeliveryOrderUsecase,
     UpdateDeliveryOrderUsecase,
-    DeleteDeliveryOrderUsecase,
+    DeleteDeliveryOrdersUsecase,
+    RecheckDeliveryOrdersUsecase,
+    ConfirmDeliveryOrdersUsecase
   ],
   exports: [],
 })

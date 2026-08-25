@@ -28,6 +28,7 @@ export class UpdateDeliveryOrderUsecase {
     deliveryRouteId: string,
     deliveryOrderId: string,
     data: UpdateDeliveryOrderData,
+    manager?: any,
   ): Promise<void> {
     const deliveryRoute = (
       await this.deliveryRouteRepo.findByQuery({
@@ -144,6 +145,6 @@ export class UpdateDeliveryOrderUsecase {
       data.rescheduledAt = now;
     }
     data.updatedAt = now;
-    await this.deliveryOrderRepo.update(deliveryOrderId, data);
+    await this.deliveryOrderRepo.update(deliveryOrderId, data, manager);
   }
 }

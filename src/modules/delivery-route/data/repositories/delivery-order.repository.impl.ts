@@ -66,6 +66,11 @@ export class DeliveryOrderRepositoryImpl implements DeliveryOrderRepository {
               id: query.id,
             });
           }
+          if (Array.isArray(query?.ids)) {
+            qb.andWhere('deliveryOrder.id IN (:...ids)', {
+              ids: query.ids,
+            });
+          }
         }),
       )
       .getMany();
@@ -78,8 +83,12 @@ export class DeliveryOrderRepositoryImpl implements DeliveryOrderRepository {
   update(
     deliveryOrderId: string,
     data: UpdateDeliveryOrderData,
+    manager?: any,
   ): Promise<DeliveryOrderModel> {
-    return this.deliveryOrderRepo.save(
+    const repo: Repository<DeliveryOrderModel> = !manager
+      ? this.deliveryOrderRepo
+      : manager.manager.getRepository(DeliveryOrderModel);
+    return repo.save(
       this.deliveryOrderRepo.create({
         ...data,
         id: deliveryOrderId,
