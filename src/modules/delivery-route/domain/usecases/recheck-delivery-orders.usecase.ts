@@ -40,7 +40,7 @@ export class RecheckDeliveryOrdersUsecase {
         await this.uowService.rollback();
         throw error;
       } finally {
-        await this.uowService.release;
+        await this.uowService.release();
       }
     });
   }
