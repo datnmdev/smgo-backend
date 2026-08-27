@@ -7,7 +7,7 @@ export abstract class MediaRepository {
 }
 
 export interface CreateMediaData {
-  fikeKey: string;
+  fileKey: string;
 }
 
 export interface FindMediaByQuery {

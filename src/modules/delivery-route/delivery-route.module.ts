@@ -19,12 +19,15 @@ import { RecheckDeliveryOrdersUsecase } from './domain/usecases/recheck-delivery
 import { UnitOfWorkModule } from '@/core/unit-of-work/unit-of-work.module';
 import { ConfirmDeliveryOrdersUsecase } from './domain/usecases/confirm_delivery_orders.usecase';
 import { DeleteDeliveryOrdersUsecase } from './domain/usecases/delete_delivery_orders.usecase';
+import { ConfigModule } from '@/core/config/config.module';
+import { SortDeliveryOrdersUsecase } from './domain/usecases/sort_delivery_orders.usecase';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([DeliveryRouteModel, DeliveryOrderModel]),
     StorageModule,
-    UnitOfWorkModule
+    UnitOfWorkModule,
+    ConfigModule
   ],
   controllers: [DeliveryRouteController],
   providers: [
@@ -48,7 +51,8 @@ import { DeleteDeliveryOrdersUsecase } from './domain/usecases/delete_delivery_o
     UpdateDeliveryOrderUsecase,
     DeleteDeliveryOrdersUsecase,
     RecheckDeliveryOrdersUsecase,
-    ConfirmDeliveryOrdersUsecase
+    ConfirmDeliveryOrdersUsecase,
+    SortDeliveryOrdersUsecase
   ],
   exports: [],
 })

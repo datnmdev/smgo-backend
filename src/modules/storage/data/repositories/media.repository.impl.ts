@@ -33,7 +33,7 @@ export class MediaRepositoryImpl implements MediaRepository {
   create(data: CreateMediaData): Promise<MediaModel> {
     return this.mediaRepo.save(
       this.mediaRepo.create({
-        fileKey: data.fikeKey,
+        fileKey: data.fileKey,
       }),
     );
   }

@@ -15,7 +15,19 @@ export abstract class DeliveryRouteRepository {
   abstract update(
     routeId: string,
     data: UpdateDeliveryRouteData,
+    manager?: any,
   ): Promise<void>;
+  abstract sortPointsForShortestRoute(
+    coordinates: Coordinate[],
+  ): Promise<Coordinate[]>;
+  abstract getShortestPathForFlexiblePoints(
+    coordinates: Coordinate[],
+  ): Promise<any>;
+}
+
+export interface Coordinate {
+  lat: number;
+  long: number;
 }
 
 export interface FindDeliveryRoutesByQuery extends TPaginationQuery {

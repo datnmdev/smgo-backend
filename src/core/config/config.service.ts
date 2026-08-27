@@ -27,6 +27,8 @@ export class ConfigService {
   getRedisConfig() {
     return {
       type: 'single',
+      host: this.nestConfigService.get('REDIS_PASS'),
+      port: Number(this.nestConfigService.get('REDIS_PORT')),
       url: `redis://:${this.nestConfigService.get('REDIS_PASS')}@${this.nestConfigService.get('REDIS_HOST')}:${Number(this.nestConfigService.get('REDIS_PORT'))}`,
     };
   }
@@ -58,9 +60,13 @@ export class ConfigService {
 
   getAiConfig() {
     return {
-      llama: {
-        url: this.nestConfigService.get('LLAMA_URL'),
-      },
+      mlxBaseUrl: this.nestConfigService.get('MLX_BASE_URL'),
+    };
+  }
+
+  getOsrmConfig() {
+    return {
+      baseUrl: this.nestConfigService.get('OSRM_BASE_URL'),
     };
   }
 }

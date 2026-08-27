@@ -20,10 +20,10 @@ export class DeliveryRouteModel {
 
   @Column('enum', {
     name: 'status',
-    enum: ['pending', 'in_progress', 'completed', 'sorting'],
+    enum: ['pending', 'sorting', 'delivering', 'completed'],
     default: () => "'pending'",
   })
-  status: 'pending' | 'in_progress' | 'completed' | 'sorting';
+  status: 'pending' | 'sorting' | 'delivering' | 'completed';
 
   @Column('timestamp with time zone', {
     name: 'created_at',

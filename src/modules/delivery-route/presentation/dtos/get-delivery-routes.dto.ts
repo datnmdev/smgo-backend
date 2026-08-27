@@ -11,6 +11,6 @@ export class GetDeliveryRoutesQueryReqDto extends PaginationQueryReqDto {
   id: string;
 
   @IsOptional()
-  @IsIn(['completed', 'in_progress', 'pending', 'sorting'])
-  status: 'completed' | 'in_progress' | 'pending' | 'sorting';
+  @IsIn(['completed', 'delivering', 'pending', 'sorting'])
+  status: 'completed' | 'delivering' | 'pending' | 'sorting';
 }

@@ -108,7 +108,7 @@ export class UpdateDeliveryOrderUsecase {
       data.cancelledAt = null;
       data.rescheduledAt = null;
     } else if (data.status === 'delivered') {
-      if (deliveryRoute.status !== 'in_progress') {
+      if (deliveryRoute.status !== 'delivering') {
         throw new DeliveryOrderCannotBeSetToDeliveredException();
       }
       if (deliveryOrder.status !== 'sorted') {
@@ -120,7 +120,7 @@ export class UpdateDeliveryOrderUsecase {
       data.cancelledAt = null;
       data.rescheduledAt = null;
     } else if (data.status === 'cancelled') {
-      if (deliveryRoute.status !== 'in_progress') {
+      if (deliveryRoute.status !== 'delivering') {
         throw new DeliveryOrderCannotBeSetToCancelledException();
       }
       if (deliveryOrder.status !== 'sorted') {
@@ -132,7 +132,7 @@ export class UpdateDeliveryOrderUsecase {
       data.cancelledAt = now;
       data.rescheduledAt = null;
     } else if (data.status === 'rescheduled') {
-      if (deliveryRoute.status !== 'in_progress') {
+      if (deliveryRoute.status !== 'delivering') {
         throw new DeliveryOrderCannotBeSetToRescheduledException();
       }
       if (deliveryOrder.status !== 'sorted') {

@@ -1,5 +1,5 @@
 export type TDeliveryRouteStatus =
-  'pending' | 'sorting' | 'in_progress' | 'completed';
+  'pending' | 'sorting' | 'delivering' | 'completed';
 
 export interface TDeliveryRoute {
   id: string;

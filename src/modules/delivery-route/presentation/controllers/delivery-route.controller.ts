@@ -49,6 +49,8 @@ import {
 } from '../dtos/confirm-delivery-orders.dto';
 import { ConfirmDeliveryOrdersUsecase } from '../../domain/usecases/confirm_delivery_orders.usecase';
 import { DeleteDeliveryOrdersUsecase } from '../../domain/usecases/delete_delivery_orders.usecase';
+import { SortDeliveryOrdersParamsReqDto } from '../dtos/sort-delivery-orders.dto';
+import { SortDeliveryOrdersUsecase } from '../../domain/usecases/sort_delivery_orders.usecase';
 
 @Controller('delivery-route')
 @UseGuards(JwtAuthGuard)
@@ -63,6 +65,7 @@ export class DeliveryRouteController {
     private readonly deleteDeliveryOrdersUsecase: DeleteDeliveryOrdersUsecase,
     private readonly recheckDeliveryOrdersUsecase: RecheckDeliveryOrdersUsecase,
     private readonly confirmDeliveryOrdersUsecase: ConfirmDeliveryOrdersUsecase,
+    private readonly sortDeliveryOrdersUsecase: SortDeliveryOrdersUsecase,
   ) {}
 
   @Get()
@@ -183,6 +186,20 @@ export class DeliveryRouteController {
         authPayload.userId,
         confirmDeliveryOrdersParams.deliveryRouteId,
         confirmDeliveryOrdersBody.deliveryOrderIds,
+      ),
+    );
+  }
+
+  @Put(':deliveryRouteId/delivery-order/m/sort')
+  async sortDeliveryOrders(
+    @AuthPayload() authPayload: JwtPayload,
+    @Param()
+    sortDeliveryOrdersParams: SortDeliveryOrdersParamsReqDto,
+  ): Promise<AppResponse<void>> {
+    return AppResponse.ok(
+      await this.sortDeliveryOrdersUsecase.execute(
+        authPayload.userId,
+        sortDeliveryOrdersParams.deliveryRouteId,
       ),
     );
   }

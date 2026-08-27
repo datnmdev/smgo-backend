@@ -30,6 +30,8 @@ export class GetDeliveryRoutesUsecase {
           await this.deliveryOrderRepo.countByStatus('pending');
         e.totalCheckedOrders =
           await this.deliveryOrderRepo.countByStatus('checked');
+        e.totalSortedOrders =
+          await this.deliveryOrderRepo.countByStatus('sorted');
         e.totalDeliveredOrders =
           await this.deliveryOrderRepo.countByStatus('delivered');
         e.totalCancelledOrders =
@@ -39,6 +41,7 @@ export class GetDeliveryRoutesUsecase {
         e.totalOrders =
           e.totalPendingOrders +
           e.totalCheckedOrders +
+          e.totalSortedOrders +
           e.totalDeliveredOrders +
           e.totalCancelledOrders +
           e.totalRescheduledOrders;
@@ -56,6 +59,7 @@ type TDeliveryRouteIncludeSummary = TPaginationResponse<
     totalOrders: number;
     totalPendingOrders: number;
     totalCheckedOrders: number;
+    totalSortedOrders: number;
     totalDeliveredOrders: number;
     totalCancelledOrders: number;
     totalRescheduledOrders: number;
