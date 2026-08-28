@@ -15,6 +15,8 @@ import {
   transactionStorage,
   UnitOfWorkService,
 } from '@/core/unit-of-work/unit-of-work.service';
+import { TDeliveryRoute } from '../entities/delivery-route.entity';
+import { TDeliveryOrder } from '../entities/delivery-order.entity';
 
 @Injectable()
 export class UpdateDeliveryRouteUsecase {
@@ -29,81 +31,120 @@ export class UpdateDeliveryRouteUsecase {
     userId: string,
     deliveryRouteId: string,
     data: UpdateDeliveryRouteData,
+    manager?: any,
   ): Promise<void> {
-    const uowManager = await this.uowService.create(ORMType.TYPEORM);
-    await transactionStorage.run(uowManager, async () => {
-      try {
-        await this.uowService.start();
-        const route = (
-          await this.getDeliveryRoutesUsecase.execute({
+    const route = (
+      await this.getDeliveryRoutesUsecase.execute({
+        userId,
+        id: deliveryRouteId,
+      })
+    ).data?.[0];
+    if (!route) {
+      throw new DeliveryRouteNotFoundException();
+    }
+
+    if (manager) {
+      await this._handle(route, data, userId, deliveryRouteId, manager);
+    } else {
+      const uowManager = await this.uowService.create(ORMType.TYPEORM);
+      await transactionStorage.run(uowManager, async () => {
+        try {
+          await this.uowService.start();
+          await this._handle(
+            route,
+            data,
             userId,
-            id: deliveryRouteId,
-          })
-        ).data?.[0];
-        if (!route) {
-          throw new DeliveryRouteNotFoundException();
+            deliveryRouteId,
+            uowManager.manager,
+          );
+          await this.uowService.commit();
+        } catch (error) {
+          await this.uowService.rollback();
+          throw error;
+        } finally {
+          await this.uowService.release();
         }
-        if (data.status == 'pending') {
-          if (route.status != 'pending' && route.status != 'sorting') {
-            throw new InvalidRouteStateForInspectionException();
-          }
-          if (route.status === 'sorting') {
-            await Promise.all(
-              route.orders
-                .filter((order) => order.status == 'sorted')
-                .map((order) =>
-                  this.updateDeliveryOrderUsecase.execute(
-                    userId,
-                    deliveryRouteId,
-                    order.id,
-                    {
-                      status: 'checked',
-                    },
-                    uowManager.manager,
-                  ),
-                ),
+      });
+    }
+  }
+
+  private async _handle(
+    route: TDeliveryRoute & {
+      totalOrders: number;
+      totalPendingOrders: number;
+      totalCheckedOrders: number;
+      totalSortedOrders: number;
+      totalDeliveredOrders: number;
+      totalCancelledOrders: number;
+      totalRescheduledOrders: number;
+      orders: Array<
+        TDeliveryOrder & {
+          orderMediaUrl: string;
+        }
+      >;
+    },
+    data: UpdateDeliveryRouteData,
+    userId: string,
+    deliveryRouteId: string,
+    manager?: any,
+  ) {
+    if (data.status == 'pending') {
+      if (route.status != 'pending' && route.status != 'sorting') {
+        throw new InvalidRouteStateForInspectionException();
+      }
+      if (route.status === 'sorting') {
+        for (const order of route.orders) {
+          if (order.status === 'sorted') {
+            await this.updateDeliveryOrderUsecase.execute(
+              userId,
+              deliveryRouteId,
+              order.id,
+              {
+                status: 'checked',
+              },
+              manager,
             );
           }
-        } else if (data.status == 'sorting') {
-          if (
-            route.status != 'pending' ||
-            route.orders.some((order) => order.status != 'checked')
-          ) {
-            throw new CannotTransitionRouteToSortException();
-          }
-        } else if (data.status == 'delivering') {
-          if (
-            route.status != 'sorting' ||
-            route.orders.some((order) => order.status != 'sorted')
-          ) {
-            throw new CannotTransitionRouteToDeliveringException();
-          }
-        } else if (data.status == 'completed') {
-          if (
-            route.status != 'delivering' ||
-            route.orders.some(
-              (order) =>
-                order.status != 'delivered' &&
-                order.status != 'cancelled' &&
-                order.status != 'rescheduled',
-            )
-          ) {
-            throw new CannotTransitionRouteToCompletedException();
-          }
+          await this.updateDeliveryOrderUsecase.execute(
+            userId,
+            deliveryRouteId,
+            order.id,
+            {
+              sequenceOrder: null,
+            },
+            manager,
+          );
         }
-        data.updatedAt = new Date();
-        await this.deliveryRouteRepo.update(
-          deliveryRouteId,
-          data,
-          uowManager.manager,
-        );
-        await this.uowService.commit();
-      } catch (error) {
-        await this.uowService.rollback();
-        throw error;
-      } finally {
-        await this.uowService.release();
+        data.totalDistance = null;
       }
-    });
+    } else if (data.status == 'sorting') {
+      if (
+        route.status != 'pending' ||
+        route.orders.some((order) => order.status != 'checked')
+      ) {
+        throw new CannotTransitionRouteToSortException();
+      }
+    } else if (data.status == 'delivering') {
+      if (
+        route.status != 'sorting' ||
+        route.orders.some((order) => order.status != 'sorted')
+      ) {
+        throw new CannotTransitionRouteToDeliveringException();
+      }
+    } else if (data.status == 'completed') {
+      if (
+        route.status != 'delivering' ||
+        route.orders.some(
+          (order) =>
+            order.status != 'delivered' &&
+            order.status != 'cancelled' &&
+            order.status != 'rescheduled',
+        )
+      ) {
+        throw new CannotTransitionRouteToCompletedException();
+      }
+    }
+    data.updatedAt = new Date();
+    await this.deliveryRouteRepo.update(deliveryRouteId, data, manager);
   }
 }

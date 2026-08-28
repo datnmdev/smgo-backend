@@ -7,12 +7,14 @@ import {
   CreateDeliveryRouteData,
   DeliveryRouteRepository,
   FindDeliveryRoutesByQuery,
+  TSortResult,
   UpdateDeliveryRouteData,
 } from '../../domain/repositories/delivery-route.repository';
 import { TPaginationResponse } from '@/core/common/pagination.entity';
 import { TDeliveryRoute } from '../../domain/entities/delivery-route.entity';
 import ky from 'ky';
 import { ConfigService } from '@/core/config/config.service';
+import { DeliveryOrderModel } from '../models/delivery-order.model';
 
 @Injectable()
 export class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
@@ -106,27 +108,162 @@ export class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
     );
   }
 
-  async sortPointsForShortestRoute(
-    coordinates: Coordinate[],
-  ): Promise<Coordinate[]> {
-    if (!coordinates || coordinates.length <= 1) return coordinates;
+  async sortOrdersForShortestRoute(
+    source: Coordinate,
+    orderModels: DeliveryOrderModel[],
+  ): Promise<TSortResult> {
+    if (!orderModels?.length) {
+      return {
+        orders: [],
+        totalDistance: 0,
+      };
+    }
 
-    const coordinatesString = coordinates
-      .map((coor) => `${coor.lat},${coor.long}`)
-      .join(';');
-    const endpoint = `trip/v1/driving/${coordinatesString}?overview=false&source=first`;
-    console.log(endpoint);
+    const coordinates = [
+      `${source.long},${source.lat}`,
+      ...orderModels.map((order) => `${order.location.x},${order.location.y}`),
+    ];
+
+    const coordinatesString = coordinates.join(';');
+
     const client = ky.create({
       prefixUrl: this.configService.getOsrmConfig().baseUrl,
-      timeout: 10000,
+      timeout: 30_000,
     });
-    const data: any = await client.get(endpoint).json();
-    const waypoints = data.waypoints;
-    waypoints.sort((a, b) => a.waypoint_index - b.waypoint_index);
-    return waypoints.map((wp: any) => ({
-      lat: wp.location[1],
-      long: wp.location[0],
+
+    const endpoint =
+      `table/v1/bike/${coordinatesString}` + `?annotations=distance`;
+
+    const data: {
+      code: string;
+      distances: Array<Array<number | null>>;
+    } = await client.get(endpoint).json();
+
+    if (data.code !== 'Ok' || !data.distances) {
+      throw new Error('OSRM table request failed');
+    }
+
+    const distances = data.distances;
+
+    const orderCount = orderModels.length;
+
+    let route: number[] = [];
+
+    const visited = new Uint8Array(orderCount);
+
+    let currentPoint = 0;
+
+    for (let step = 0; step < orderCount; step++) {
+      let nearestOrder = -1;
+      let nearestDistance = Infinity;
+
+      for (let orderIndex = 0; orderIndex < orderCount; orderIndex++) {
+        if (visited[orderIndex]) continue;
+
+        const pointIndex = orderIndex + 1;
+
+        const distance = distances[currentPoint]?.[pointIndex];
+
+        if (distance == null) continue;
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestOrder = orderIndex;
+        }
+      }
+
+      if (nearestOrder === -1) {
+        throw new Error(`Cannot find reachable order at step ${step}`);
+      }
+
+      route.push(nearestOrder);
+
+      visited[nearestOrder] = 1;
+
+      currentPoint = nearestOrder + 1;
+    }
+
+    const getPointIndex = (orderIndex: number): number => {
+      return orderIndex + 1;
+    };
+
+    const getDistance = (
+      fromOrderIndex: number | null,
+      toOrderIndex: number,
+    ): number => {
+      const fromPoint =
+        fromOrderIndex === null ? 0 : getPointIndex(fromOrderIndex);
+
+      const toPoint = getPointIndex(toOrderIndex);
+
+      const distance = distances[fromPoint]?.[toPoint];
+
+      if (distance == null) {
+        return Infinity;
+      }
+
+      return distance;
+    };
+
+    let improved = true;
+
+    while (improved) {
+      improved = false;
+
+      for (let i = 0; i < route.length - 1; i++) {
+        const a = i === 0 ? null : route[i - 1];
+
+        const b = route[i];
+
+        for (let j = i + 1; j < route.length; j++) {
+          const c = route[j];
+
+          const d = j + 1 < route.length ? route[j + 1] : null;
+
+          const oldDistance =
+            getDistance(a, b) + (d === null ? 0 : getDistance(c, d));
+
+          const newDistance =
+            getDistance(a, c) + (d === null ? 0 : getDistance(b, d));
+
+          if (newDistance < oldDistance) {
+            const reversed = route.slice(i, j + 1).reverse();
+
+            route.splice(i, j - i + 1, ...reversed);
+
+            improved = true;
+
+            break;
+          }
+        }
+
+        if (improved) break;
+      }
+    }
+
+    let totalDistance = 0;
+    let previousPoint = 0;
+    for (const orderIndex of route) {
+      const currentPoint = getPointIndex(orderIndex);
+      const distance = distances[previousPoint]?.[currentPoint];
+      if (distance == null) {
+        throw new Error(
+          `Cannot calculate distance from point ${previousPoint} to ${currentPoint}`,
+        );
+      }
+      totalDistance += distance;
+      previousPoint = currentPoint;
+    }
+
+    const orders = route.map((orderIndex, index) => ({
+      ...orderModels[orderIndex],
+      sequenceOrder: index + 1,
     }));
+
+    return {
+      orders,
+      totalDistance,
+    };
   }
 
   getShortestPathForFlexiblePoints(coordinates: Coordinate[]): Promise<any> {

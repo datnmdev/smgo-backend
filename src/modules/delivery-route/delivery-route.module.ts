@@ -21,6 +21,7 @@ import { ConfirmDeliveryOrdersUsecase } from './domain/usecases/confirm_delivery
 import { DeleteDeliveryOrdersUsecase } from './domain/usecases/delete_delivery_orders.usecase';
 import { ConfigModule } from '@/core/config/config.module';
 import { SortDeliveryOrdersUsecase } from './domain/usecases/sort_delivery_orders.usecase';
+import { ConfirmSortedDeliveryOrdersUsecase } from './domain/usecases/confirm-sorted-delivery-orders.usecase';
 
 @Module({
   imports: [
@@ -52,7 +53,8 @@ import { SortDeliveryOrdersUsecase } from './domain/usecases/sort_delivery_order
     DeleteDeliveryOrdersUsecase,
     RecheckDeliveryOrdersUsecase,
     ConfirmDeliveryOrdersUsecase,
-    SortDeliveryOrdersUsecase
+    SortDeliveryOrdersUsecase,
+    ConfirmSortedDeliveryOrdersUsecase
   ],
   exports: [],
 })

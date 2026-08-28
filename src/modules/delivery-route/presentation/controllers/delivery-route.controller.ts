@@ -49,8 +49,16 @@ import {
 } from '../dtos/confirm-delivery-orders.dto';
 import { ConfirmDeliveryOrdersUsecase } from '../../domain/usecases/confirm_delivery_orders.usecase';
 import { DeleteDeliveryOrdersUsecase } from '../../domain/usecases/delete_delivery_orders.usecase';
-import { SortDeliveryOrdersParamsReqDto } from '../dtos/sort-delivery-orders.dto';
+import {
+  SortDeliveryOrdersBodyReqDto,
+  SortDeliveryOrdersParamsReqDto,
+} from '../dtos/sort-delivery-orders.dto';
 import { SortDeliveryOrdersUsecase } from '../../domain/usecases/sort_delivery_orders.usecase';
+import {
+  ConfirmSortedDeliveryOrdersBodyReqDto,
+  ConfirmSortedDeliveryOrdersParamsReqDto,
+} from '../dtos/confirm-sorted-delivery-orders.dto';
+import { ConfirmSortedDeliveryOrdersUsecase } from '../../domain/usecases/confirm-sorted-delivery-orders.usecase';
 
 @Controller('delivery-route')
 @UseGuards(JwtAuthGuard)
@@ -66,6 +74,7 @@ export class DeliveryRouteController {
     private readonly recheckDeliveryOrdersUsecase: RecheckDeliveryOrdersUsecase,
     private readonly confirmDeliveryOrdersUsecase: ConfirmDeliveryOrdersUsecase,
     private readonly sortDeliveryOrdersUsecase: SortDeliveryOrdersUsecase,
+    private readonly confirmSortedDeliveryOrdersUsecase: ConfirmSortedDeliveryOrdersUsecase,
   ) {}
 
   @Get()
@@ -193,13 +202,34 @@ export class DeliveryRouteController {
   @Put(':deliveryRouteId/delivery-order/m/sort')
   async sortDeliveryOrders(
     @AuthPayload() authPayload: JwtPayload,
-    @Param()
-    sortDeliveryOrdersParams: SortDeliveryOrdersParamsReqDto,
+    @Param() sortDeliveryOrdersParams: SortDeliveryOrdersParamsReqDto,
+    @Body() sortDeliveryOrdersBody: SortDeliveryOrdersBodyReqDto,
   ): Promise<AppResponse<void>> {
     return AppResponse.ok(
       await this.sortDeliveryOrdersUsecase.execute(
         authPayload.userId,
         sortDeliveryOrdersParams.deliveryRouteId,
+        {
+          lat: sortDeliveryOrdersBody.source.y,
+          long: sortDeliveryOrdersBody.source.x,
+        },
+      ),
+    );
+  }
+
+  @Put(':deliveryRouteId/delivery-order/m/confirm-sorted')
+  async confirmSortedDeliveryOrders(
+    @AuthPayload() authPayload: JwtPayload,
+    @Param()
+    confirmSortedDeliveryOrdersParams: ConfirmSortedDeliveryOrdersParamsReqDto,
+    @Body()
+    confirmSortedDeliveryOrdersBody: ConfirmSortedDeliveryOrdersBodyReqDto,
+  ): Promise<AppResponse<void>> {
+    return AppResponse.ok(
+      await this.confirmSortedDeliveryOrdersUsecase.execute(
+        authPayload.userId,
+        confirmSortedDeliveryOrdersParams.deliveryRouteId,
+        confirmSortedDeliveryOrdersBody.deliveryOrderIds,
       ),
     );
   }

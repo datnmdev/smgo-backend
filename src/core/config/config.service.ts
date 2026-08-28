@@ -60,7 +60,7 @@ export class ConfigService {
 
   getAiConfig() {
     return {
-      mlxBaseUrl: this.nestConfigService.get('MLX_BASE_URL'),
+      qwenBaseUrl: this.nestConfigService.get('QWEN_BASE_URL'),
     };
   }
 

@@ -10,10 +10,6 @@ import { NestMinioModule } from 'nestjs-minio';
 import { StorageModule } from '../storage/storage.module';
 import { AiModule } from '../ai/ai.module';
 import { DeliveryRouteModule } from '../delivery-route/delivery-route.module';
-import { BullModule } from '@nestjs/bullmq';
-import { BullBoardModule } from '@bull-board/nestjs';
-import { ExpressAdapter } from '@bull-board/express';
-import { BullMQAdapter } from '@bull-board/api/bullMQAdapter';
 import { NotificationModule } from '../notification/notification.module';
 
 @Module({
@@ -30,28 +26,11 @@ import { NotificationModule } from '../notification/notification.module';
       useFactory: (configService: ConfigService) =>
         configService.getRedisConfig() as RedisModuleOptions,
     }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        connection: {
-          url: configService.getRedisConfig().url,
-        },
-      }),
-    }),
     NestMinioModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
         configService.getMinioConfig(),
-    }),
-    BullBoardModule.forRoot({
-      route: '/admin/queues',
-      adapter: ExpressAdapter,
-    }),
-    BullBoardModule.forFeature({
-      name: 'extract-order-info',
-      adapter: BullMQAdapter,
     }),
     AuthModule,
     UserModule,

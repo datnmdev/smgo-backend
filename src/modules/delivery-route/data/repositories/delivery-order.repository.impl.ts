@@ -73,6 +73,7 @@ export class DeliveryOrderRepositoryImpl implements DeliveryOrderRepository {
           }
         }),
       )
+      .orderBy('deliveryOrder.createdAt', 'DESC')
       .getMany();
   }
 

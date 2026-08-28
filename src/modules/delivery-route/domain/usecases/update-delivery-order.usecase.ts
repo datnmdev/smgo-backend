@@ -69,7 +69,10 @@ export class UpdateDeliveryOrderUsecase {
       data.cancelledAt = null;
       data.rescheduledAt = null;
     } else if (data.status === 'checked') {
-      if (deliveryRoute.status !== 'pending') {
+      if (
+        deliveryRoute.status !== 'pending' &&
+        deliveryRoute.status !== 'sorting'
+      ) {
         throw new DeliveryOrderCannotBeSetToInspectedException();
       }
       if (deliveryOrder.status === 'checked') {

@@ -7,7 +7,7 @@ export class LlamaSource {
   constructor(private readonly configService: ConfigService) {}
 
   async chat(prompt: string): Promise<string> {
-    const response = await ky.post(this.configService.getAiConfig().llama.url, {
+    const response = await ky.post(this.configService.getAiConfig().qwenBaseUrl, {
       json: {
         model: 'qwen2.5',
         messages: [{ role: 'user', content: prompt }],

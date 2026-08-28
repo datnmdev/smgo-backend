@@ -6,6 +6,7 @@ import {
   TDeliveryRoute,
   TDeliveryRouteStatus,
 } from '../entities/delivery-route.entity';
+import { TDeliveryOrder } from '../entities/delivery-order.entity';
 
 export abstract class DeliveryRouteRepository {
   abstract findByQuery(
@@ -17,13 +18,19 @@ export abstract class DeliveryRouteRepository {
     data: UpdateDeliveryRouteData,
     manager?: any,
   ): Promise<void>;
-  abstract sortPointsForShortestRoute(
-    coordinates: Coordinate[],
-  ): Promise<Coordinate[]>;
+  abstract sortOrdersForShortestRoute(
+    source: Coordinate,
+    orders: TDeliveryOrder[],
+  ): Promise<TSortResult>;
   abstract getShortestPathForFlexiblePoints(
     coordinates: Coordinate[],
   ): Promise<any>;
 }
+
+export type TSortResult = {
+  orders: TDeliveryOrder[];
+  totalDistance: number;
+};
 
 export interface Coordinate {
   lat: number;
@@ -47,5 +54,6 @@ export interface UpdateDeliveryRouteData {
   name?: string;
   status?: TDeliveryRouteStatus;
   updatedAt?: Date;
+  totalDistance?: number | null;
   deletedAt?: Date | null;
 }

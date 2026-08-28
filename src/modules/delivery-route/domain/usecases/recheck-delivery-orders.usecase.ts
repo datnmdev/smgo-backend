@@ -22,19 +22,17 @@ export class RecheckDeliveryOrdersUsecase {
     await transactionStorage.run(uowServiceManager, async () => {
       try {
         await this.uowService.start();
-        await Promise.all(
-          deliveryOrderIds.map((deliveryOrderId) =>
-            this.updateDeliveryOrderUsecase.execute(
-              userId,
-              deliveryRouteId,
-              deliveryOrderId,
-              {
-                status: 'pending',
-              },
-              uowServiceManager.manager,
-            ),
-          ),
-        );
+        for (const deliveryOrderId of deliveryOrderIds) {
+          await this.updateDeliveryOrderUsecase.execute(
+            userId,
+            deliveryRouteId,
+            deliveryOrderId,
+            {
+              status: 'pending',
+            },
+            uowServiceManager.manager,
+          );
+        }
         await this.uowService.commit();
       } catch (error) {
         await this.uowService.rollback();

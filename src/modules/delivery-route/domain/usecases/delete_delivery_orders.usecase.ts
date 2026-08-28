@@ -22,19 +22,17 @@ export class DeleteDeliveryOrdersUsecase {
     await transactionStorage.run(uowServiceManager, async () => {
       try {
         await this.uowService.start();
-        await Promise.all(
-          deliveryOrderIds.map((deliveryOrderId) =>
-            this.updateDeliveryOrderUsecase.execute(
-              userId,
-              deliveryRouteId,
-              deliveryOrderId,
-              {
-                deletedAt: new Date(),
-              },
-              uowServiceManager.manager,
-            ),
-          ),
-        );
+        for (const deliveryOrderId of deliveryOrderIds) {
+          await this.updateDeliveryOrderUsecase.execute(
+            userId,
+            deliveryRouteId,
+            deliveryOrderId,
+            {
+              deletedAt: new Date(),
+            },
+            uowServiceManager.manager,
+          );
+        }
         await this.uowService.commit();
       } catch (error) {
         await this.uowService.rollback();

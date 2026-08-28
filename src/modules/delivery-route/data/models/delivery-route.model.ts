@@ -25,6 +25,9 @@ export class DeliveryRouteModel {
   })
   status: 'pending' | 'sorting' | 'delivering' | 'completed';
 
+  @Column('double precision', { name: 'total_distance', nullable: true })
+  totalDistance: number;
+
   @Column('timestamp with time zone', {
     name: 'created_at',
     default: () => 'CURRENT_TIMESTAMP',

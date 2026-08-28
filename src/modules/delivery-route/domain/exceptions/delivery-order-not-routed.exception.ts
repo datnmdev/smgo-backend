@@ -5,7 +5,7 @@ export class DeliveryOrderNotRoutedException extends BadRequestException {
     super({
       error: 'DELIVERY_ORDER_NOT_ROUTED',
       message:
-        'Cannot confirm scheduling because the delivery order has not been routed by the system yet',
+        'Cannot sort delivery orders because some orders have not been routed ',
     });
   }
 }

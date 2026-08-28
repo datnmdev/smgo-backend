@@ -7,7 +7,7 @@ import {
 import { UpdateDeliveryOrderUsecase } from './update-delivery-order.usecase';
 
 @Injectable()
-export class ConfirmDeliveryOrdersUsecase {
+export class ConfirmSortedDeliveryOrdersUsecase {
   constructor(
     private readonly uowService: UnitOfWorkService,
     private readonly updateDeliveryOrderUsecase: UpdateDeliveryOrderUsecase,
@@ -28,7 +28,7 @@ export class ConfirmDeliveryOrdersUsecase {
             deliveryRouteId,
             deliveryOrderId,
             {
-              status: 'checked',
+              status: 'sorted',
             },
             uowServiceManager.manager,
           );
