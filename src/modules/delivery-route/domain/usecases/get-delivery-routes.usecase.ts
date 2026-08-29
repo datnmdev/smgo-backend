@@ -23,31 +23,46 @@ export class GetDeliveryRoutesUsecase {
     const res = (await this.deliveryRouteRepo.findByQuery(
       query,
     )) as TDeliveryRouteIncludeSummary;
-
     await Promise.all(
       res.data.map(async (e) => {
-        e.totalPendingOrders =
-          await this.deliveryOrderRepo.countByStatus('pending');
-        e.totalCheckedOrders =
-          await this.deliveryOrderRepo.countByStatus('checked');
-        e.totalSortedOrders =
-          await this.deliveryOrderRepo.countByStatus('sorted');
-        e.totalDeliveredOrders =
-          await this.deliveryOrderRepo.countByStatus('delivered');
-        e.totalCancelledOrders =
-          await this.deliveryOrderRepo.countByStatus('cancelled');
-        e.totalRescheduledOrders =
-          await this.deliveryOrderRepo.countByStatus('rescheduled');
-        e.totalOrders =
-          e.totalPendingOrders +
-          e.totalCheckedOrders +
-          e.totalSortedOrders +
-          e.totalDeliveredOrders +
-          e.totalCancelledOrders +
-          e.totalRescheduledOrders;
         e.orders = await this.getDeliveryOrdersUsecase.execute({
-          deliveryRouteId: query.id,
+          deliveryRouteId: e.id,
         });
+        e.totalOrders = e.orders.length;
+        if (e.status === 'pending') {
+          e.totalPendingOrders = e.orders.filter(
+            (order) => order.status === 'pending',
+          ).length;
+          e.totalCheckedOrders = e.orders.filter(
+            (order) => order.status === 'checked',
+          ).length;
+          e.totalSortedOrders = 0;
+          e.totalDeliveredOrders = 0;
+          e.totalCancelledOrders = 0;
+          e.totalRescheduledOrders = 0;
+        } else if (e.status === 'sorting') {
+          e.totalPendingOrders = 0;
+          e.totalCheckedOrders = e.totalOrders;
+          e.totalSortedOrders = e.orders.filter(
+            (order) => order.status === 'sorted',
+          ).length;
+          e.totalDeliveredOrders = 0;
+          e.totalCancelledOrders = 0;
+          e.totalRescheduledOrders = 0;
+        } else {
+          e.totalPendingOrders = 0;
+          e.totalCheckedOrders = e.totalOrders;
+          e.totalSortedOrders = e.totalOrders;
+          e.totalDeliveredOrders = e.orders.filter(
+            (order) => order.status === 'delivered',
+          ).length;
+          e.totalCancelledOrders = e.orders.filter(
+            (order) => order.status === 'cancelled',
+          ).length;
+          e.totalRescheduledOrders = e.orders.filter(
+            (order) => order.status === 'rescheduled',
+          ).length;
+        }
       }),
     );
     return res;
