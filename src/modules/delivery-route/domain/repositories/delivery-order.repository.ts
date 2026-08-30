@@ -8,7 +8,7 @@ export abstract class DeliveryOrderRepository {
   abstract findByQuery(
     query?: FindDeliveryOrdersByQuery,
   ): Promise<TDeliveryOrder[]>;
-  abstract create(data: CreateDeliveryOrderData): Promise<TDeliveryOrder>;
+  abstract create(data: CreateDeliveryOrderData, manager?: any): Promise<TDeliveryOrder>;
   abstract update(
     deliveryOrderId: string,
     data: UpdateDeliveryOrderData,

@@ -9,7 +9,10 @@ import { TDeliveryRoute } from '../entities/delivery-route.entity';
 export class CreateDeliveryRouteUsecase {
   constructor(private readonly deliveryRouteRepo: DeliveryRouteRepository) {}
 
-  execute(data: CreateDeliveryRouteData): Promise<TDeliveryRoute> {
-    return this.deliveryRouteRepo.create(data);
+  execute(
+    data: CreateDeliveryRouteData,
+    manager?: any,
+  ): Promise<TDeliveryRoute> {
+    return this.deliveryRouteRepo.create(data, manager);
   }
 }

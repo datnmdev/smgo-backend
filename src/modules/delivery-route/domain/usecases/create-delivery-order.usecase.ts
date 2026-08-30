@@ -19,17 +19,21 @@ export class CreateDeliveryOrderUsecase {
   async execute(
     userId: string,
     data: CreateDeliveryOrderData,
+    manager?: any,
   ): Promise<TDeliveryOrder> {
     const route = (
-      await this.deliveryRouteRepo.findByQuery({
-        id: data.deliveryRouteId,
-        userId,
-      })
+      await this.deliveryRouteRepo.findByQuery(
+        {
+          id: data.deliveryRouteId,
+          userId,
+        },
+        manager,
+      )
     ).data?.[0];
     if (!route) {
       throw new DeliveryRouteNotFoundException();
     }
-    const res = await this.deliveryOrderRepo.create(data);
+    const res = await this.deliveryOrderRepo.create(data, manager);
     if (res.orderMediaId != null) {
       await this.attachMediaUsecase.execute([res.orderMediaId]);
     }

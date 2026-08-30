@@ -77,8 +77,14 @@ export class DeliveryOrderRepositoryImpl implements DeliveryOrderRepository {
       .getMany();
   }
 
-  create(data: CreateDeliveryOrderData): Promise<TDeliveryOrder> {
-    return this.deliveryOrderRepo.save(this.deliveryOrderRepo.create(data));
+  create(
+    data: CreateDeliveryOrderData,
+    manager?: any,
+  ): Promise<TDeliveryOrder> {
+    const repo: Repository<DeliveryOrderModel> = !manager
+      ? this.deliveryOrderRepo
+      : manager.manager.getRepository(DeliveryOrderModel);
+    return repo.save(repo.create(data));
   }
 
   update(

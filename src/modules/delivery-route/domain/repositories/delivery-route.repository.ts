@@ -7,12 +7,18 @@ import {
   TDeliveryRouteStatus,
 } from '../entities/delivery-route.entity';
 import { TDeliveryOrder } from '../entities/delivery-order.entity';
+import { CreateDeliveryOrderData } from './delivery-order.repository';
+import { TPoint } from '@/modules/user/domain/entities/location.entity';
 
 export abstract class DeliveryRouteRepository {
   abstract findByQuery(
     query?: FindDeliveryRoutesByQuery,
+    manager?: any,
   ): Promise<TPaginationResponse<TDeliveryRoute>>;
-  abstract create(data: CreateDeliveryRouteData): Promise<TDeliveryRoute>;
+  abstract create(
+    data: CreateDeliveryRouteData,
+    manager?: any,
+  ): Promise<TDeliveryRoute>;
   abstract update(
     routeId: string,
     data: UpdateDeliveryRouteData,
@@ -48,6 +54,23 @@ export interface FindDeliveryRoutesByQuery extends TPaginationQuery {
 export interface CreateDeliveryRouteData {
   name: string;
   userId: string;
+}
+
+interface DeliveryOrderData {
+  orderMediaId?: string | null;
+  orderCode: string;
+  orderName?: string | null;
+  contactName: string;
+  contactPhone: string;
+  address: string;
+  location: TPoint;
+  appliedLocationId?: string | null;
+}
+
+export interface CreateDeliveryRouteWithOrdersData {
+  name: string;
+  userId: string;
+  orders: DeliveryOrderData[];
 }
 
 export interface UpdateDeliveryRouteData {
