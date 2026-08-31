@@ -6,7 +6,11 @@ import { LocationRepository } from '../repositories/location.repository';
 export class DeleteLocationUsecase {
   constructor(private readonly locationRepo: LocationRepository) {}
 
-  async execute(userId: string, locationId: string): Promise<void> {
+  async execute(
+    userId: string,
+    locationId: string,
+    manager?: any,
+  ): Promise<void> {
     const Location = await this.locationRepo.findByQuery({
       userId,
       id: locationId,
@@ -14,8 +18,12 @@ export class DeleteLocationUsecase {
     if (!Location) {
       throw new LocationNotFoundException();
     }
-    await this.locationRepo.update(locationId, {
-      deletedAt: new Date(),
-    });
+    await this.locationRepo.update(
+      locationId,
+      {
+        deletedAt: new Date(),
+      },
+      manager,
+    );
   }
 }

@@ -16,11 +16,14 @@ import { UpdateLocationUsecase } from './domain/usecases/update-location.usecase
 import { DeleteLocationUsecase } from './domain/usecases/delete-location.usecase';
 import { LocationController } from './presentation/controllers/location.controller';
 import { GetLocationSuggestionUsecase } from './domain/usecases/get-location-sugesstions.usecase';
+import { DeleteLocationsUsecase } from './domain/usecases/delete-locations.usecase';
+import { UnitOfWorkModule } from '@/core/unit-of-work/unit-of-work.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserModel, LocationModel]),
     StorageModule,
+    UnitOfWorkModule
   ],
   controllers: [UserController, LocationController],
   providers: [
@@ -38,6 +41,7 @@ import { GetLocationSuggestionUsecase } from './domain/usecases/get-location-sug
     CreateLocationUsecase,
     UpdateLocationUsecase,
     DeleteLocationUsecase,
+    DeleteLocationsUsecase,
     GetLocationSuggestionUsecase
   ],
   exports: [CreateUserUsecase, GetUsersUsecase],

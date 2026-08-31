@@ -15,6 +15,7 @@ export abstract class LocationRepository {
   abstract update(
     locationId: string,
     data: UpdateLocationData,
+    manager?: any,
   ): Promise<TLocation>;
 }
 

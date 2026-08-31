@@ -23,7 +23,6 @@ import {
 } from '../../domain/usecases/get-locations.usecase';
 import { CreateLocationUsecase } from '../../domain/usecases/create-location.usecase';
 import { UpdateLocationUsecase } from '../../domain/usecases/update-location.usecase';
-import { DeleteLocationUsecase } from '../../domain/usecases/delete-location.usecase';
 import { JwtPayload } from '@/core/security/jwt.strategy';
 import { TUser } from '../../domain/entities/user.entity';
 import { TPaginationResponse } from '@/core/common/pagination.entity';
@@ -31,7 +30,8 @@ import { GetLocationsQueryReqDto } from '../dtos/get-locations.dto';
 import { CreateLocationBodyReqDto } from '../dtos/create-location.dto';
 import { TLocation } from '../../domain/entities/location.entity';
 import { CreateLocationData } from '../../domain/repositories/location.repository';
-import { DeleteLocationParamsReqDto } from '../dtos/delete-location.dto';
+import { DeleteLocationsBodyReqDto } from '../dtos/delete-locations.dto';
+import { DeleteLocationsUsecase } from '../../domain/usecases/delete-locations.usecase';
 
 @Controller('user')
 @UseGuards(JwtAuthGuard)
@@ -41,7 +41,7 @@ export class UserController {
     private readonly getLocationsUsecase: GetLocationsUsecase,
     private readonly createLocationUsecase: CreateLocationUsecase,
     private readonly updateLocationUsecase: UpdateLocationUsecase,
-    private readonly deleteLocationUsecase: DeleteLocationUsecase,
+    private readonly deleteLocationsUsecase: DeleteLocationsUsecase,
   ) {}
 
   @Get('profile')
@@ -100,15 +100,15 @@ export class UserController {
     );
   }
 
-  @Delete('locations/:id')
-  async deleteLocation(
+  @Delete('locations/m')
+  async deleteLocations(
     @AuthPayload() authPayload: JwtPayload,
-    @Param() updateLocationParams: DeleteLocationParamsReqDto,
+    @Body() deleteLocationsBody: DeleteLocationsBodyReqDto,
   ): Promise<AppResponse<void>> {
     return AppResponse.ok(
-      await this.deleteLocationUsecase.execute(
+      await this.deleteLocationsUsecase.execute(
         authPayload.userId,
-        updateLocationParams.id,
+        deleteLocationsBody.locationIds,
       ),
     );
   }

@@ -15,7 +15,6 @@ import { AppResponse } from '@/core/common/response.dto';
 import { GetDeliveryRoutesUsecase } from '../../domain/usecases/get-delivery-routes.usecase';
 import { CreateDeliveryRouteUsecase } from '../../domain/usecases/create-delivery-route.usecase';
 import { UpdateDeliveryRouteUsecase } from '../../domain/usecases/update-delivery-route.usecase';
-import { DeleteDeliveryRouteUsecase } from '../../domain/usecases/delete-delivery-route.usecase';
 import { CreateDeliveryOrderUsecase } from '../../domain/usecases/create-delivery-order.usecase';
 import { UpdateDeliveryOrderUsecase } from '../../domain/usecases/update-delivery-order.usecase';
 import { JwtPayload } from '@/core/security/jwt.strategy';
@@ -25,7 +24,7 @@ import {
   UpdateDeliveryRouteBodyReqDto,
   UpdateDeliveryRouteParamsReqDto,
 } from '../dtos/update-delivery-route.dto';
-import { DeleteDeliveryRouteParamsReqDto } from '../dtos/delete-delivery-route.dto';
+import { DeleteDeliveryRoutesBodyReqDto } from '../dtos/delete-delivery-routes.dto';
 import {
   CreateDeliveryOrderBodyReqDto,
   CreateDeliveryOrderParamsReqDto,
@@ -61,6 +60,7 @@ import {
 import { ConfirmSortedDeliveryOrdersUsecase } from '../../domain/usecases/confirm-sorted-delivery-orders.usecase';
 import { CreateDeliveryRouteWithOrdersBodyReqDto } from '../dtos/create-delivery-route-with-orders.dto';
 import { CreateDeliveryRouteWithOrdersUsecase } from '../../domain/usecases/create-delivery-route-with-orders.usecase';
+import { DeleteDeliveryRoutesUsecase } from '../../domain/usecases/delete_delivery_routes.usecase';
 
 @Controller('delivery-route')
 @UseGuards(JwtAuthGuard)
@@ -69,7 +69,7 @@ export class DeliveryRouteController {
     private readonly getDeliveryRoutesUsecase: GetDeliveryRoutesUsecase,
     private readonly createDeliveryRouteUsecase: CreateDeliveryRouteUsecase,
     private readonly updateDeliveryRouteUsecase: UpdateDeliveryRouteUsecase,
-    private readonly deleteDeliveryRouteUsecase: DeleteDeliveryRouteUsecase,
+    private readonly deleteDeliveryRoutesUsecase: DeleteDeliveryRoutesUsecase,
     private readonly createDeliveryOrderUsecase: CreateDeliveryOrderUsecase,
     private readonly updateDeliveryOrderUsecase: UpdateDeliveryOrderUsecase,
     private readonly deleteDeliveryOrdersUsecase: DeleteDeliveryOrdersUsecase,
@@ -140,15 +140,15 @@ export class DeliveryRouteController {
     );
   }
 
-  @Delete(':id')
-  async deleteDeliveryRoute(
+  @Delete('m')
+  async deleteDeliveryRoutes(
     @AuthPayload() authPayload: JwtPayload,
-    @Param() deleteDeliveryRouteParams: DeleteDeliveryRouteParamsReqDto,
+    @Body() deleteDeliveryRoutesBody: DeleteDeliveryRoutesBodyReqDto,
   ): Promise<AppResponse<void>> {
     return AppResponse.ok(
-      await this.deleteDeliveryRouteUsecase.execute(
+      await this.deleteDeliveryRoutesUsecase.execute(
         authPayload.userId,
-        deleteDeliveryRouteParams.id,
+        deleteDeliveryRoutesBody.deliveryRouteIds,
       ),
     );
   }

@@ -195,9 +195,16 @@ export class LocationRepositoryImpl implements LocationRepository {
     return this.locationsRepo.save(this.locationsRepo.create(data));
   }
 
-  update(locationId: string, data: UpdateLocationData): Promise<TLocation> {
-    return this.locationsRepo.save(
-      this.locationsRepo.create({
+  update(
+    locationId: string,
+    data: UpdateLocationData,
+    manager?: any,
+  ): Promise<TLocation> {
+    const repo: Repository<LocationModel> = !manager
+      ? this.locationsRepo
+      : manager.manager.getRepository(LocationModel);
+    return repo.save(
+      repo.create({
         ...data,
         id: locationId,
       }),

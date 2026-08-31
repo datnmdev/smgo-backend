@@ -6,7 +6,11 @@ import { DeliveryRouteNotFoundException } from '../exceptions/delivery-route-not
 export class DeleteDeliveryRouteUsecase {
   constructor(private readonly deliveryRouteRepo: DeliveryRouteRepository) {}
 
-  async execute(userId: string, deliveryRouteId: string): Promise<void> {
+  async execute(
+    userId: string,
+    deliveryRouteId: string,
+    manager?: any,
+  ): Promise<void> {
     const route = (
       await this.deliveryRouteRepo.findByQuery({
         userId,
@@ -16,8 +20,12 @@ export class DeleteDeliveryRouteUsecase {
     if (!route) {
       throw new DeliveryRouteNotFoundException();
     }
-    await this.deliveryRouteRepo.update(deliveryRouteId, {
-      deletedAt: new Date(),
-    });
+    await this.deliveryRouteRepo.update(
+      deliveryRouteId,
+      {
+        deletedAt: new Date(),
+      },
+      manager,
+    );
   }
 }
