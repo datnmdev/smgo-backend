@@ -24,13 +24,15 @@ import { SortDeliveryOrdersUsecase } from './domain/usecases/sort_delivery_order
 import { ConfirmSortedDeliveryOrdersUsecase } from './domain/usecases/confirm-sorted-delivery-orders.usecase';
 import { CreateDeliveryRouteWithOrdersUsecase } from './domain/usecases/create-delivery-route-with-orders.usecase';
 import { DeleteDeliveryRoutesUsecase } from './domain/usecases/delete_delivery_routes.usecase';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([DeliveryRouteModel, DeliveryOrderModel]),
     StorageModule,
     UnitOfWorkModule,
-    ConfigModule
+    ConfigModule,
+    UserModule
   ],
   controllers: [DeliveryRouteController],
   providers: [

@@ -3,7 +3,6 @@ import {
   DeliveryRouteRepository,
   FindDeliveryRoutesByQuery,
 } from '../repositories/delivery-route.repository';
-import { DeliveryOrderRepository } from '../repositories/delivery-order.repository';
 import { TDeliveryRoute } from '../entities/delivery-route.entity';
 import { TPaginationResponse } from '@/core/common/pagination.entity';
 import { TDeliveryOrder } from '../entities/delivery-order.entity';
@@ -13,7 +12,6 @@ import { GetDeliveryOrdersUsecase } from './get-delivery-orders.usecase';
 export class GetDeliveryRoutesUsecase {
   constructor(
     private readonly deliveryRouteRepo: DeliveryRouteRepository,
-    private readonly deliveryOrderRepo: DeliveryOrderRepository,
     private readonly getDeliveryOrdersUsecase: GetDeliveryOrdersUsecase,
   ) {}
 

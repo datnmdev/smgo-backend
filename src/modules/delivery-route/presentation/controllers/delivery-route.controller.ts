@@ -61,12 +61,18 @@ import { ConfirmSortedDeliveryOrdersUsecase } from '../../domain/usecases/confir
 import { CreateDeliveryRouteWithOrdersBodyReqDto } from '../dtos/create-delivery-route-with-orders.dto';
 import { CreateDeliveryRouteWithOrdersUsecase } from '../../domain/usecases/create-delivery-route-with-orders.usecase';
 import { DeleteDeliveryRoutesUsecase } from '../../domain/usecases/delete_delivery_routes.usecase';
+import {
+  GetDeliveryOrdersParamsReqDto,
+  GetDeliveryOrdersQueryReqDto,
+} from '../dtos/get-delivery-orders.dto';
+import { GetDeliveryOrdersUsecase } from '../../domain/usecases/get-delivery-orders.usecase';
 
 @Controller('delivery-route')
 @UseGuards(JwtAuthGuard)
 export class DeliveryRouteController {
   constructor(
     private readonly getDeliveryRoutesUsecase: GetDeliveryRoutesUsecase,
+    private readonly getDeliveryOrdersUsecase: GetDeliveryOrdersUsecase,
     private readonly createDeliveryRouteUsecase: CreateDeliveryRouteUsecase,
     private readonly updateDeliveryRouteUsecase: UpdateDeliveryRouteUsecase,
     private readonly deleteDeliveryRoutesUsecase: DeleteDeliveryRoutesUsecase,
@@ -150,6 +156,20 @@ export class DeliveryRouteController {
         authPayload.userId,
         deleteDeliveryRoutesBody.deliveryRouteIds,
       ),
+    );
+  }
+
+  @Get(':deliveryRouteId/delivery-order')
+  async getDeliveryOrders(
+    @AuthPayload() authPayload: JwtPayload,
+    @Param() paramsDto: GetDeliveryOrdersParamsReqDto,
+    @Query() queryDto: GetDeliveryOrdersQueryReqDto,
+  ): Promise<AppResponse> {
+    return AppResponse.ok(
+      await this.getDeliveryOrdersUsecase.execute({
+        keyword: queryDto.keyword,
+        deliveryRouteId: paramsDto.deliveryRouteId,
+      }),
     );
   }
 

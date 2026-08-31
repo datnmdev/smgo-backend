@@ -1,11 +1,13 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class GetDeliveryOrdersQueryReqDto {
   @IsOptional()
   @IsString()
   keyword: string;
+}
 
-  @IsOptional()
+export class GetDeliveryOrdersParamsReqDto {
+  @IsNotEmpty()
   @IsString()
   deliveryRouteId: string;
 }

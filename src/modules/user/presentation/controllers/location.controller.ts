@@ -17,6 +17,8 @@ export class LocationController {
       await this.getLocationSuggestionUsecase.execute({
         contactPhone: queryDto.contactPhone,
         address: queryDto.address,
+        pageNumber: queryDto.pageNumber,
+        pageSize: queryDto.pageSize,
       }),
     );
   }

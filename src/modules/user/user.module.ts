@@ -23,7 +23,7 @@ import { UnitOfWorkModule } from '@/core/unit-of-work/unit-of-work.module';
   imports: [
     TypeOrmModule.forFeature([UserModel, LocationModel]),
     StorageModule,
-    UnitOfWorkModule
+    UnitOfWorkModule,
   ],
   controllers: [UserController, LocationController],
   providers: [
@@ -42,8 +42,8 @@ import { UnitOfWorkModule } from '@/core/unit-of-work/unit-of-work.module';
     UpdateLocationUsecase,
     DeleteLocationUsecase,
     DeleteLocationsUsecase,
-    GetLocationSuggestionUsecase
+    GetLocationSuggestionUsecase,
   ],
-  exports: [CreateUserUsecase, GetUsersUsecase],
+  exports: [CreateUserUsecase, GetUsersUsecase, GetLocationsUsecase],
 })
 export class UserModule {}
