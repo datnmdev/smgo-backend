@@ -1,0 +1,48 @@
+import { SubscriptionProductId } from './subscription.entity';
+
+export type TEventType =
+  | 'SUBSCRIPTION_RECOVERED'
+  | 'SUBSCRIPTION_RENEWED'
+  | 'SUBSCRIPTION_CANCELED'
+  | 'SUBSCRIPTION_PURCHASED'
+  | 'SUBSCRIPTION_ON_HOLD'
+  | 'SUBSCRIPTION_IN_GRACE_PERIOD'
+  | 'SUBSCRIPTION_RENEWAL_RESTORED'
+  | 'SUBSCRIPTION_PRICE_CHANGE_CONFIRMED'
+  | 'SUBSCRIPTION_DEFERRED'
+  | 'SUBSCRIPTION_PAUSED'
+  | 'SUBSCRIPTION_PAUSE_SCHEDULE_CHANGED'
+  | 'SUBSCRIPTION_REVOKED'
+  | 'SUBSCRIPTION_EXPIRED'
+  | 'SUBSCRIPTION_PENDING_PURCHASE_CANCELED'
+  | 'UNKNOWN';
+
+export const GoogleNotificationTypeMap: Record<number, TEventType> = {
+  1: 'SUBSCRIPTION_RECOVERED',
+  2: 'SUBSCRIPTION_RENEWED',
+  3: 'SUBSCRIPTION_CANCELED',
+  4: 'SUBSCRIPTION_PURCHASED',
+  5: 'SUBSCRIPTION_ON_HOLD',
+  6: 'SUBSCRIPTION_IN_GRACE_PERIOD',
+  7: 'SUBSCRIPTION_RENEWAL_RESTORED',
+  8: 'SUBSCRIPTION_PRICE_CHANGE_CONFIRMED',
+  9: 'SUBSCRIPTION_DEFERRED',
+  10: 'SUBSCRIPTION_PAUSED',
+  11: 'SUBSCRIPTION_PAUSE_SCHEDULE_CHANGED',
+  12: 'SUBSCRIPTION_REVOKED',
+  13: 'SUBSCRIPTION_EXPIRED',
+  20: 'SUBSCRIPTION_PENDING_PURCHASE_CANCELED',
+};
+
+export interface TPaymentTransaction {
+  id: string;
+  userId: string;
+  orderId: string;
+  productId: SubscriptionProductId;
+  purchaseToken: string;
+  eventType: TEventType;
+  priceCurrency: string;
+  amount: string;
+  rawPayload: object;
+  createdAt: Date;
+}

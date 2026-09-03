@@ -10,7 +10,11 @@ import { v4 } from 'uuid';
 import ky from 'ky';
 import { InvalidFacebookTokenException } from '../exceptions/invalid-facebook-token.exception';
 import { TokenProvider } from '../services/token-provider.service';
-import { DeviceInfo, Session, SessionRepository } from '../repositories/session.repository';
+import {
+  DeviceInfo,
+  Session,
+  SessionRepository,
+} from '../repositories/session.repository';
 import dfns from 'date-fns';
 import { GetUsersUsecase } from '@/modules/user/domain/usecases/get-users.usecase';
 import { JwtPayload, JwtTokens } from '@/core/security/jwt.strategy';
@@ -46,7 +50,7 @@ export class SignInWithFacebookUsecase {
               access_token: appToken,
             },
           })
-          .json<any>();        
+          .json<any>();
         if (!debugRes?.data?.is_valid) {
           throw new InvalidFacebookTokenException();
         }
@@ -80,6 +84,7 @@ export class SignInWithFacebookUsecase {
               name: profile.name,
               uuid: profile.id,
               provider: 'facebook',
+              avatar: profile.picture?.data?.url ?? null,
             },
             uowManager.manager,
           );
@@ -115,7 +120,7 @@ export class SignInWithFacebookUsecase {
         );
         await this.uowService.commit();
         return tokens;
-      } catch (error) {        
+      } catch (error) {
         await this.uowService.rollback();
         throw new InvalidFacebookTokenException();
       } finally {

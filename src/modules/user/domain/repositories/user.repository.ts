@@ -9,6 +9,7 @@ export interface CreateUserData {
   name: string;
   uuid: string;
   provider: 'google' | 'facebook';
+  avatar?: string | null;
 }
 
 export interface FindUsersByQuery {

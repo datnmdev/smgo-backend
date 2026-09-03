@@ -11,6 +11,7 @@ import { StorageModule } from '../storage/storage.module';
 import { AiModule } from '../ai/ai.module';
 import { DeliveryRouteModule } from '../delivery-route/delivery-route.module';
 import { NotificationModule } from '../notification/notification.module';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
   imports: [
@@ -38,7 +39,8 @@ import { NotificationModule } from '../notification/notification.module';
     AppVersionModule,
     StorageModule,
     AiModule,
-    NotificationModule
+    NotificationModule,
+    PaymentModule
   ],
 })
 export class AppModule {}

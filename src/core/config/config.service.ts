@@ -69,4 +69,21 @@ export class ConfigService {
       baseUrl: this.nestConfigService.get('OSRM_BASE_URL'),
     };
   }
+
+  googleServiceAccountConfig() {
+    return {
+      googleServiceAccountFilePath: this.nestConfigService.get(
+        'GOOGLE_SERVICE_ACCOUNT_FILE_PATH',
+      ),
+    };
+  }
+
+  googleSubscriptionConfig() {
+    return {
+      packageName: this.nestConfigService.get('PACKAGE_NAME'),
+      pubsubVerificationAudience: this.nestConfigService.get(
+        'PUBSUB_VERIFICATION_AUDIENCE',
+      ),
+    };
+  }
 }

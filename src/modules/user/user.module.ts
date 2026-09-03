@@ -18,12 +18,14 @@ import { LocationController } from './presentation/controllers/location.controll
 import { GetLocationSuggestionUsecase } from './domain/usecases/get-location-sugesstions.usecase';
 import { DeleteLocationsUsecase } from './domain/usecases/delete-locations.usecase';
 import { UnitOfWorkModule } from '@/core/unit-of-work/unit-of-work.module';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserModel, LocationModel]),
     StorageModule,
     UnitOfWorkModule,
+    PaymentModule
   ],
   controllers: [UserController, LocationController],
   providers: [

@@ -57,6 +57,7 @@ export class SignInWithGoogleUsecase {
               name: payload.family_name + ' ' + payload.given_name,
               uuid: payload.sub,
               provider: 'google',
+              avatar: payload.picture ?? null,
             },
             uowManager.manager,
           );

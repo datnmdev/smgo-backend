@@ -47,7 +47,7 @@ export class UserController {
   @Get('profile')
   async getProfile(
     @AuthPayload() authPayload: JwtPayload,
-  ): Promise<AppResponse<TUser>> {
+  ): Promise<AppResponse> {
     return AppResponse.ok(
       (
         await this.getUsersUsecase.execute({

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
-import { CreateUserData, FindUsersByQuery, UserRepository } from '../../domain/repositories/user.repository';
+import {
+  CreateUserData,
+  FindUsersByQuery,
+  UserRepository,
+} from '../../domain/repositories/user.repository';
 import { UserModel } from '../models/user.model';
 
 @Injectable()
@@ -15,7 +19,7 @@ export class UserRepositoryImpl implements UserRepository {
     const repo: Repository<UserModel> = !!manager
       ? manager.manager.getRepository(UserModel)
       : this.usersRepo;
-    return this.usersRepo.save(this.usersRepo.create(data));
+    return repo.save(repo.create(data));
   }
 
   findByQuery(query?: FindUsersByQuery): Promise<UserModel[]> {
