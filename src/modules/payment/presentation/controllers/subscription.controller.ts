@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { VerifySubscriptionUsecase } from '../../domain/usecases/verify-subscription.usecase';
 import { AppResponse } from '@/core/common/response.dto';
 import { JwtAuthGuard } from '@/core/security/jwt-auth.guard';

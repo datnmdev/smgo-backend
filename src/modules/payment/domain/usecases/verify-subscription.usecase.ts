@@ -66,7 +66,6 @@ export class VerifySubscriptionUsecase {
         }
         await this.subscriptionRepo.acknowledgeAndroidPurchase(
           result.subscription.purchaseToken,
-          result.subscription.productId,
         );
         await this.uowService.commit();
         return true;

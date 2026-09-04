@@ -26,7 +26,6 @@ export abstract class SubscriptionRepository {
   ): Promise<androidpublisher_v3.Schema$SubscriptionPurchaseV2>;
   abstract acknowledgeAndroidPurchase(
     purchaseToken: string,
-    productId: string,
   ): Promise<void>;
 }
 

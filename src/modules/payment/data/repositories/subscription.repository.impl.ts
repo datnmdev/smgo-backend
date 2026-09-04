@@ -22,7 +22,10 @@ import { SubscriptionBasePlanCurrencyCodeMissingException } from '../exceptions/
 import { Brackets, Repository } from 'typeorm';
 import { SubscriptionModel } from '../models/subscription.model';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SubscriptionProductId, TSubscription } from '../../domain/entities/subscription.entity';
+import {
+  SubscriptionProductId,
+  TSubscription,
+} from '../../domain/entities/subscription.entity';
 
 @Injectable()
 export class SubscriptionRepositoryImpl implements SubscriptionRepository {
@@ -123,14 +126,17 @@ export class SubscriptionRepositoryImpl implements SubscriptionRepository {
     };
   }
 
-  async acknowledgeAndroidPurchase(
-    purchaseToken: string,
-    productId: string,
-  ): Promise<void> {
+  async acknowledgeAndroidPurchase(purchaseToken: string): Promise<void> {
     const { packageName } = this.configService.googleSubscriptionConfig();
+    const data = await this.getGoogleSubscriptionInfo(
+      packageName,
+      purchaseToken,
+    );
+    if (data.acknowledgementState === 'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED') {
+      return;
+    }
     await this.androidPublisher.purchases.subscriptions.acknowledge({
       packageName,
-      subscriptionId: productId,
       token: purchaseToken,
       requestBody: {},
     });
