@@ -218,8 +218,12 @@ export class HandleGooglePlayWebhookUsecase {
     await this.subscriptionRepo.updateSubscription(
       currentSubscription.id,
       {
-        status: 'EXPIRED',
-        autoRenew: false,
+        status: 'ACTIVE',
+        autoRenew: null,
+        purchaseToken: null,
+        productId: 'smgo_basic',
+        startsAt: null,
+        expiresAt: null,
       },
       manager,
     );
@@ -232,8 +236,12 @@ export class HandleGooglePlayWebhookUsecase {
     await this.subscriptionRepo.updateSubscription(
       currentSubscription.id,
       {
-        status: 'EXPIRED',
-        expiresAt: new Date(),
+        status: 'ACTIVE',
+        autoRenew: null,
+        purchaseToken: null,
+        productId: 'smgo_basic',
+        startsAt: null,
+        expiresAt: null,
       },
       manager,
     );
