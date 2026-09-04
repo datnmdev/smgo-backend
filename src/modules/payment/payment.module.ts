@@ -20,11 +20,9 @@ import { HandleGooglePlayWebhookUsecase } from './domain/usecases/handle-google-
   imports: [
     TypeOrmModule.forFeature([SubscriptionModel, PaymentTransactionModel]),
     ConfigModule,
-    UnitOfWorkModule
+    UnitOfWorkModule,
   ],
-  controllers: [
-    SubscriptionController
-  ],
+  controllers: [SubscriptionController],
   providers: [
     // Repositories
     {
@@ -42,8 +40,8 @@ import { HandleGooglePlayWebhookUsecase } from './domain/usecases/handle-google-
     UpdateSubscriptionUsecase,
     CreatePaymentTransactionUsecase,
     GetCurrentSubscriptionUsecase,
-    HandleGooglePlayWebhookUsecase
+    HandleGooglePlayWebhookUsecase,
   ],
-  exports: [CreateSubscriptionUsecase],
+  exports: [CreateSubscriptionUsecase, GetCurrentSubscriptionUsecase],
 })
 export class PaymentModule {}

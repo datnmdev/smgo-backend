@@ -66,6 +66,8 @@ import {
   GetDeliveryOrdersQueryReqDto,
 } from '../dtos/get-delivery-orders.dto';
 import { GetDeliveryOrdersUsecase } from '../../domain/usecases/get-delivery-orders.usecase';
+import { CheckPlanUsecase } from '../../domain/usecases/check-plan.usecase';
+import { DeliveryRouteNotFoundException } from '../../domain/exceptions/delivery-route-not-found.exception';
 
 @Controller('delivery-route')
 @UseGuards(JwtAuthGuard)
@@ -84,6 +86,7 @@ export class DeliveryRouteController {
     private readonly sortDeliveryOrdersUsecase: SortDeliveryOrdersUsecase,
     private readonly confirmSortedDeliveryOrdersUsecase: ConfirmSortedDeliveryOrdersUsecase,
     private readonly createDeliveryRouteWithOrdersUsecase: CreateDeliveryRouteWithOrdersUsecase,
+    private readonly checkPlanUsecase: CheckPlanUsecase,
   ) {}
 
   @Get()
@@ -122,6 +125,10 @@ export class DeliveryRouteController {
     @Body()
     createDeliveryRouteWithOrdersBody: CreateDeliveryRouteWithOrdersBodyReqDto,
   ): Promise<AppResponse> {
+    await this.checkPlanUsecase.execute(authPayload.userId, {
+      orderCount: createDeliveryRouteWithOrdersBody.orders.length,
+    });
+
     return AppResponse.ok(
       await this.createDeliveryRouteWithOrdersUsecase.execute({
         userId: authPayload.userId,
@@ -179,6 +186,22 @@ export class DeliveryRouteController {
     @Param() createDeliveryOrderParams: CreateDeliveryOrderParamsReqDto,
     @Body() createDeliveryOrderBody: CreateDeliveryOrderBodyReqDto,
   ): Promise<AppResponse> {
+    // Kiểm tra gói plan
+    const deliveryRoute = (
+      await this.getDeliveryRoutesUsecase.execute({
+        userId: authPayload.userId,
+        id: createDeliveryOrderParams.deliveryRouteId,
+        pageNumber: 1,
+        pageSize: 1,
+      })
+    ).data?.[0];
+    if (!deliveryRoute) {
+      throw new DeliveryRouteNotFoundException();
+    }
+    await this.checkPlanUsecase.execute(authPayload.userId, {
+      orderCount: deliveryRoute.totalOrders + 1,
+    });
+
     return AppResponse.ok(
       await this.createDeliveryOrderUsecase.execute(authPayload.userId, {
         ...createDeliveryOrderBody,

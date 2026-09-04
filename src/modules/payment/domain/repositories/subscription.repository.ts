@@ -1,5 +1,9 @@
 import { androidpublisher_v3 } from 'googleapis';
-import { SubscriptionProductId, SubscriptionStatus, TSubscription } from '../entities/subscription.entity';
+import {
+  SubscriptionProductId,
+  SubscriptionStatus,
+  TSubscription,
+} from '../entities/subscription.entity';
 
 export type Platform = 'android';
 
@@ -24,9 +28,7 @@ export abstract class SubscriptionRepository {
     packageName: string,
     token: string,
   ): Promise<androidpublisher_v3.Schema$SubscriptionPurchaseV2>;
-  abstract acknowledgeAndroidPurchase(
-    purchaseToken: string,
-  ): Promise<void>;
+  abstract acknowledgeAndroidPurchase(purchaseToken: string): Promise<void>;
 }
 
 export interface FindSubscriptionsByQuery {
@@ -60,7 +62,7 @@ export interface CreateSubscriptionData {
   status: SubscriptionStatus;
   productId: SubscriptionProductId;
   purchaseToken?: string | null;
-  startsAt?: Date | null;
+  startsAt: Date;
   expiresAt?: Date | null;
   autoRenew?: boolean | null;
 }
@@ -69,9 +71,7 @@ export interface UpdateSubscriptionData {
   status?: SubscriptionStatus;
   productId?: SubscriptionProductId;
   purchaseToken?: string | null;
-  startsAt?: Date | null;
+  startsAt?: Date;
   expiresAt?: Date | null;
   autoRenew?: boolean | null;
 }
-
-

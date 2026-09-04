@@ -25,6 +25,8 @@ import { ConfirmSortedDeliveryOrdersUsecase } from './domain/usecases/confirm-so
 import { CreateDeliveryRouteWithOrdersUsecase } from './domain/usecases/create-delivery-route-with-orders.usecase';
 import { DeleteDeliveryRoutesUsecase } from './domain/usecases/delete_delivery_routes.usecase';
 import { UserModule } from '../user/user.module';
+import { CheckPlanUsecase } from './domain/usecases/check-plan.usecase';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
   imports: [
@@ -32,7 +34,8 @@ import { UserModule } from '../user/user.module';
     StorageModule,
     UnitOfWorkModule,
     ConfigModule,
-    UserModule
+    UserModule,
+    PaymentModule
   ],
   controllers: [DeliveryRouteController],
   providers: [
@@ -60,7 +63,8 @@ import { UserModule } from '../user/user.module';
     ConfirmDeliveryOrdersUsecase,
     SortDeliveryOrdersUsecase,
     ConfirmSortedDeliveryOrdersUsecase,
-    CreateDeliveryRouteWithOrdersUsecase
+    CreateDeliveryRouteWithOrdersUsecase,
+    CheckPlanUsecase
   ],
   exports: [],
 })

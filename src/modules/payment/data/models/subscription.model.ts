@@ -23,8 +23,8 @@ export class SubscriptionModel {
   @Column('text', { name: 'purchase_token', nullable: true })
   purchaseToken: string | null;
 
-  @Column('timestamp with time zone', { name: 'starts_at', nullable: true })
-  startsAt: Date | null;
+  @Column('timestamp with time zone', { name: 'starts_at' })
+  startsAt: Date;
 
   @Column('timestamp with time zone', { name: 'expires_at', nullable: true })
   expiresAt: Date | null;

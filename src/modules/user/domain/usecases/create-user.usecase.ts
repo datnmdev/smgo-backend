@@ -47,6 +47,7 @@ export class CreateUserUsecase {
         userId: newUser.id,
         productId: 'smgo_basic',
         status: 'ACTIVE',
+        startsAt: newUser.createdAt,
       },
       manager,
     );
