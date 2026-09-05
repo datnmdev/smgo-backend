@@ -29,7 +29,7 @@ export class CheckPlanUsecase {
     if (typeof options.orderCount === 'number') {
       switch (currentPlan.productId) {
         case 'smgo_basic':
-          if (options.orderCount > 5) {
+          if (options.orderCount > 10) {
             throw new BasicOrderLimitExceededException();
           }
           break;
