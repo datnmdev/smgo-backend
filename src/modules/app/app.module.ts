@@ -12,9 +12,15 @@ import { AiModule } from '../ai/ai.module';
 import { DeliveryRouteModule } from '../delivery-route/delivery-route.module';
 import { NotificationModule } from '../notification/notification.module';
 import { PaymentModule } from '../payment/payment.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import path from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: path.join(process.cwd(), 'public'),
+      serveRoot: '/public',
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) =>
@@ -40,7 +46,7 @@ import { PaymentModule } from '../payment/payment.module';
     StorageModule,
     AiModule,
     NotificationModule,
-    PaymentModule
+    PaymentModule,
   ],
 })
 export class AppModule {}

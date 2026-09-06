@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmGo - Giao hàng thông minh</title>
+    <!-- FontAwesome Icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* ==================== 1. CẤU HÌNH CHUNG & VARIABLES ==================== */
+      :root {
+        --primary-color: #00a651;
+        --primary-hover: #008d44;
+        --bg-gradient: linear-gradient(
+          180deg,
+          #e4f7ec 0%,
+          #f7faf8 30%,
+          #f4f6f5 100%
+        );
+        --card-bg: #ffffff;
+        --text-main: #1a1a1a;
+        --text-sub: #666666;
+        --border-color: #e2e8f0;
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+
+      body {
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 20px 0;
+      }
+
+      /* ==================== 2. ADVANCED LOADING SCREEN ==================== */
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.65)),
+          url('https://qkwp9rg7-8080.asse.devtunnels.ms/public/images/bg_splash.png')
+            no-repeat center center/cover;
+        transition:
+          opacity 0.5s ease,
+          visibility 0.5s ease;
+      }
+
+      .loader-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        padding: 35px 30px;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 340px;
+        width: 85%;
+      }
+
+      /* Cấu hình kích thước ảnh Logo trong Loader */
+      .loader-logo-img {
+        max-width: 120px;
+        height: auto;
+        object-fit: contain;
+        margin-bottom: 8px;
+      }
+
+      .loader-slogan {
+        font-size: 13px;
+        color: var(--text-sub);
+        margin-bottom: 25px;
+      }
+
+      .spinner {
+        width: 44px;
+        height: 44px;
+        border: 4px solid #e0f2fe;
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+      }
+
+      .loader-text {
+        color: var(--text-main);
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      body.loaded #loader {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* ==================== 3. CONTAINER RESPONSIVE ==================== */
+      .app-container {
+        width: 100%;
+        max-width: 480px;
+        padding: 15px;
+        margin: 0 auto;
+      }
+
+      /* ==================== 4. HEADER ==================== */
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Cấu hình kích thước ảnh Logo trong Header */
+      .logo-img {
+        max-width: 120px;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: var(--text-sub);
+        margin-top: 6px;
+      }
+
+      /* ==================== 5. CARD COMPONENT ==================== */
+      .card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+
+      .card-header i {
+        color: var(--primary-color);
+        background: #e8f5e9;
+        padding: 6px 8px;
+        border-radius: 8px;
+      }
+
+      /* ==================== 6. LOCATION CARD ==================== */
+      .location-card {
+        text-align: center;
+      }
+
+      .location-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        background: #e8f5e9;
+        color: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+        font-size: 22px;
+      }
+
+      .location-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .location-desc {
+        font-size: 13px;
+        color: var(--text-sub);
+        line-height: 1.4;
+        margin-bottom: 18px;
+      }
+
+      .btn-primary {
+        width: 100%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: var(--radius-md);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.2s;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-primary:disabled {
+        background: #93c5fd;
+        cursor: not-allowed;
+      }
+
+      .privacy-note {
+        font-size: 11px;
+        color: var(--text-sub);
+        margin-top: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      .coords-box {
+        background: #f0fdf4;
+        border: 1px solid #dcfce7;
+        padding: 12px 15px;
+        border-radius: var(--radius-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        text-align: left;
+      }
+
+      .coords-label {
+        font-size: 12px;
+        color: var(--text-sub);
+        margin-bottom: 2px;
+      }
+
+      .coords-value {
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .btn-copy {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: var(--primary-color);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .map-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn-map {
+        flex: 1;
+        padding: 10px;
+        border-radius: var(--radius-md);
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .btn-google {
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+        background: white;
+      }
+
+      .btn-smgo {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+      }
+
+      /* ==================== 7. ORDER INFO ==================== */
+      .order-content {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 15px;
+      }
+
+      .product-img {
+        width: 100px;
+        height: 100px;
+        border-radius: var(--radius-md);
+        object-fit: cover;
+        background-color: #eee;
+      }
+
+      .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .info-item i {
+        color: var(--primary-color);
+        background: #e8f5e9;
+        padding: 5px;
+        border-radius: 6px;
+        font-size: 12px;
+        margin-top: 2px;
+      }
+
+      .info-label {
+        font-size: 11px;
+        color: var(--text-sub);
+      }
+
+      .info-val {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      /* ==================== 8. RECEIVER INFO ==================== */
+      .receiver-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .action-btns {
+        display: flex;
+        gap: 10px;
+      }
+
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #e8f5e9;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+      }
+
+      .note-box {
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--text-sub);
+        line-height: 1.4;
+      }
+
+      .footer-note {
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-sub);
+        margin-top: 15px;
+      }
+
+      /* ==================== 9. TOAST NOTIFICATION ==================== */
+      #toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .toast {
+        min-width: 280px;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: #ffffff;
+        color: #333;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        animation: slideIn 0.3s ease forwards;
+        border-left: 5px solid #ccc;
+      }
+
+      .toast.success {
+        border-left-color: var(--primary-color);
+      }
+      .toast.success i {
+        color: var(--primary-color);
+      }
+
+      .toast.error {
+        border-left-color: #ef4444;
+      }
+      .toast.error i {
+        color: #ef4444;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* ==================== 10. MODAL HƯỚNG DẪN BẬT QUYỀN ==================== */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 10001;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-card {
+        background: #ffffff;
+        border-radius: var(--radius-lg);
+        max-width: 420px;
+        width: 100%;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+      }
+
+      .modal-overlay.active .modal-card {
+        transform: translateY(0);
+      }
+
+      .modal-icon {
+        width: 60px;
+        height: 60px;
+        background: #fef2f2;
+        color: #ef4444;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        margin: 0 auto 16px;
+      }
+
+      .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .modal-desc {
+        font-size: 13px;
+        color: var(--text-sub);
+        text-align: center;
+        line-height: 1.5;
+        margin-bottom: 18px;
+      }
+
+      .guide-steps {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 12px 16px;
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .guide-step-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 13px;
+        margin-bottom: 8px;
+        color: var(--text-main);
+      }
+
+      .guide-step-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .step-num {
+        background: var(--primary-color);
+        color: white;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
+
+      .modal-btn {
+        width: 100%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: var(--radius-md);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* ==================== 11. RESPONSIVE BREAKPOINTS ==================== */
+      @media (max-width: 480px) {
+        #toast-container {
+          left: 15px;
+          right: 15px;
+          bottom: 15px;
+        }
+        .toast {
+          width: 100%;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .app-container {
+          max-width: 700px;
+        }
+        .order-content {
+          grid-template-columns: 140px 1fr;
+        }
+        .product-img {
+          width: 140px;
+          height: 140px;
+        }
+        .info-list {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .app-container {
+          max-width: 800px;
+        }
+        .card {
+          padding: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loader">
+      <div class="loader-content">
+        <img
+          src="https://qkwp9rg7-8080.asse.devtunnels.ms/public/images/logo_text.png"
+          alt="SmGo Logo"
+          class="loader-logo-img"
+        />
+        <div class="loader-slogan">Giao nhanh - Nhẹ việc</div>
+        <div class="spinner"></div>
+        <div class="loader-text">Đang tải dữ liệu...</div>
+      </div>
+    </div>
+
+    <!-- Toast container thông báo -->
+    <div id="toast-container"></div>
+
+    <!-- Modal Hướng Dẫn Mở Quyền Vị Trí Tiếng Việt -->
+    <div class="modal-overlay" id="permission-modal">
+      <div class="modal-card">
+        <div class="modal-icon">
+          <i class="fa-solid fa-location-crosshairs"></i>
+        </div>
+        <h3 class="modal-title">Cần quyền truy cập vị trí</h3>
+        <p class="modal-desc">
+          Bạn đã từ chối quyền định vị trước đó. Vui lòng cho phép trình duyệt
+          truy cập vị trí để hoàn tất giao nhận hàng.
+        </p>
+        <div class="guide-steps">
+          <div class="guide-step-item">
+            <span class="step-num">1</span>
+            <span
+              >Bấm vào <b>Biểu tượng Cài đặt / Khóa</b> ở góc thanh địa chỉ
+              trình duyệt.</span
+            >
+          </div>
+          <div class="guide-step-item">
+            <span class="step-num">2</span>
+            <span
+              >Tìm mục <b>Vị trí (Location)</b> và chọn
+              <b>Cho phép (Allow)</b>.</span
+            >
+          </div>
+          <div class="guide-step-item">
+            <span class="step-num">3</span>
+            <span>Tải lại trang và bấm nút <b>Chia sẻ vị trí</b>.</span>
+          </div>
+        </div>
+        <button class="modal-btn" onclick="closePermissionModal()">
+          Đã hiểu, đóng hướng dẫn
+        </button>
+      </div>
+    </div>
+
+    <!-- Wrapper ứng dụng -->
+    <div class="app-container">
+      <!-- Header Logo -->
+      <header class="header">
+        <!-- Thay Logo Text bằng Logo Hình Ảnh -->
+        <div class="logo">
+          <img
+            src="https://qkwp9rg7-8080.asse.devtunnels.ms/public/images/logo_text.png"
+            alt="SmGo Logo"
+            class="logo-img"
+          />
+        </div>
+        <p class="subtitle">Giao nhanh - Nhẹ việc</p>
+      </header>
+
+      <!-- Block Vị Trí -->
+      <div class="card location-card">
+        <!-- Trạng thái 1: Chưa chia sẻ -->
+        <div id="state-unshared" style="display: none">
+          <div class="location-icon-wrapper">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <h2 class="location-title">Người nhận cần vị trí của bạn</h2>
+          <p class="location-desc">
+            Vui lòng chia sẻ vị trí hiện tại để người gửi dễ dàng giao hàng cho
+            bạn.
+          </p>
+
+          <button
+            class="btn-primary"
+            id="btn-share"
+            onclick="handleShareLocation()"
+          >
+            <i class="fa-solid fa-crosshairs" id="btn-share-icon"></i>
+            <span id="btn-share-text">Chia sẻ vị trí của tôi</span>
+          </button>
+        </div>
+
+        <!-- Trạng thái 2: Đã chia sẻ -->
+        <div id="state-shared" style="display: none">
+          <div class="location-icon-wrapper">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <h2 class="location-title">Bạn đang chia sẻ vị trí</h2>
+          <p class="location-desc">
+            Người giao hàng có thể xem vị trí hiện tại của bạn để dễ dàng giao
+            hàng.
+          </p>
+
+          <div class="coords-box">
+            <div>
+              <div class="coords-label">Tọa độ hiện tại</div>
+              <div class="coords-value" id="user-coords-text">--</div>
+            </div>
+            <button class="btn-copy" onclick="copyCoordinates()">
+              <i class="fa-regular fa-copy"></i> Sao chép
+            </button>
+          </div>
+
+          <div class="map-buttons">
+            <a
+              href="#"
+              id="btn-google-map"
+              target="_blank"
+              class="btn-map btn-google"
+            >
+              <img
+                src="https://qkwp9rg7-8080.asse.devtunnels.ms/public/icons/google-maps.png"
+                alt="Google Maps Logo"
+                style="width: 16px"
+              />
+              Đi đến Google Maps
+            </a>
+            <a
+              href="#"
+              id="btn-smgo-map"
+              class="btn-map btn-smgo"
+              onclick="handleSmGoMapClick(event)"
+            >
+              <img
+                src="https://qkwp9rg7-8080.asse.devtunnels.ms/public/icons/smgo-logo.png"
+                alt="SmGo Logo"
+                style="width: 16px"
+              />
+              Đi đến SmGo Map
+            </a>
+          </div>
+        </div>
+
+        <div class="privacy-note">
+          <i class="fa-solid fa-lock"></i> Vị trí của bạn chỉ được chia sẻ tạm
+          thời cho đơn hàng này và được bảo mật tuyệt đối.
+        </div>
+      </div>
+
+      <!-- Block Thông Tin Đơn Hàng -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fa-solid fa-box"></i> Thông tin đơn hàng
+        </div>
+        <div class="order-content">
+          <img
+            src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=300&auto=format&fit=crop"
+            alt="Sản phẩm"
+            class="product-img"
+          />
+          <div class="info-list">
+            <div class="info-item">
+              <i class="fa-solid fa-barcode"></i>
+              <div>
+                <div class="info-label">Mã vận đơn</div>
+                <div class="info-val">SGO123456789VN</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <i class="fa-solid fa-cube"></i>
+              <div>
+                <div class="info-label">Tên sản phẩm</div>
+                <div class="info-val">Tai nghe Bluetooth AirPro X</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Block Thông Tin Người Nhận -->
+      <div class="card">
+        <div class="card-header">
+          <i class="fa-solid fa-user-large"></i> Thông tin người nhận
+        </div>
+        <div class="receiver-row">
+          <div class="info-list">
+            <div>
+              <div class="info-label">Họ và tên</div>
+              <div class="info-val">Nguyễn Văn An</div>
+            </div>
+            <div>
+              <div class="info-label">Số điện thoại</div>
+              <div class="info-val">0901 234 567</div>
+            </div>
+            <div>
+              <div class="info-label">Địa chỉ</div>
+              <div class="info-val">Đường số 18, Linh Trung, Thủ Đức</div>
+            </div>
+          </div>
+          <div class="action-btns">
+            <a href="tel:0901234567" class="icon-btn"
+              ><i class="fa-solid fa-phone"></i
+            ></a>
+            <a href="sms:0901234567" class="icon-btn"
+              ><i class="fa-solid fa-comment-dots"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-note">
+        <i class="fa-solid fa-shield-halved"></i> SmGo cam kết bảo vệ thông tin
+        của bạn
+      </div>
+    </div>
+
+    <!-- SCRIPT XỬ LÝ LOGIC -->
+    <script>
+      // ==================== 1. GIẢ LẬP API (MOCK API) ====================
+      function mockFetchUserLocationAPI() {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            const hasLocation = Math.random() > 0.5;
+            if (hasLocation) {
+              resolve({
+                status: 200,
+                data: { latitude: 10.776864, longitude: 106.700813 },
+              });
+            } else {
+              resolve({ status: 200, data: null });
+            }
+          }, 1200);
+        });
+      }
+
+      function mockSaveLocationAPI(coords) {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            const isSuccess = Math.random() > 0.1;
+            if (isSuccess) {
+              resolve({ status: 200, message: 'Lưu vị trí thành công' });
+            } else {
+              reject({ status: 500, message: 'Lỗi kết nối máy chủ!' });
+            }
+          }, 1500);
+        });
+      }
+
+      // ==================== 2. HIỂN THỊ THÔNG BÁO (TOAST) ====================
+      function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+
+        const icon =
+          type === 'success'
+            ? '<i class="fa-solid fa-circle-check"></i>'
+            : '<i class="fa-solid fa-triangle-exclamation"></i>';
+
+        toast.innerHTML = `${icon} <span>${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.animation = 'slideIn 0.3s ease reverse forwards';
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      // ==================== 3. MODAL ĐIỀU KHIỂN ====================
+      function openPermissionModal() {
+        document.getElementById('permission-modal').classList.add('active');
+      }
+
+      function closePermissionModal() {
+        document.getElementById('permission-modal').classList.remove('active');
+      }
+
+      // ==================== 4. XỬ LÝ KHỞI TẠO TRANG ====================
+      window.addEventListener('DOMContentLoaded', async function () {
+        try {
+          const response = await mockFetchUserLocationAPI();
+          if (response.data) {
+            renderSharedUI(response.data.latitude, response.data.longitude);
+          } else {
+            renderUnsharedUI();
+          }
+        } catch (error) {
+          showToast('Không thể tải thông tin vị trí!', 'error');
+          renderUnsharedUI();
+        } finally {
+          document.body.classList.add('loaded');
+        }
+      });
+
+      function renderUnsharedUI() {
+        document.getElementById('state-unshared').style.display = 'block';
+        document.getElementById('state-shared').style.display = 'none';
+      }
+
+      function renderSharedUI(lat, lng) {
+        const coordsStr = `${lat}, ${lng}`;
+        document.getElementById('user-coords-text').innerText = coordsStr;
+        document.getElementById('btn-google-map').href =
+          `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
+
+        document.getElementById('state-unshared').style.display = 'none';
+        document.getElementById('state-shared').style.display = 'block';
+      }
+
+      async function handleShareLocation() {
+        const btn = document.getElementById('btn-share');
+        const icon = document.getElementById('btn-share-icon');
+        const text = document.getElementById('btn-share-text');
+        btn.disabled = true;
+        icon.className = 'fa-solid fa-spinner fa-spin';
+        text.innerText = 'Đang lấy vị trí...';
+
+        if ('geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const coords = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              };
+
+              try {
+                await mockSaveLocationAPI(coords);
+                renderSharedUI(coords.latitude, coords.longitude);
+                showToast('Chia sẻ vị trí thành công!', 'success');
+              } catch (err) {
+                showToast(err.message || 'Lỗi khi lưu vị trí!', 'error');
+              } finally {
+                resetShareButton();
+              }
+            },
+            (error) => {
+              switch (error.code) {
+                case error.PERMISSION_DENIED:
+                  showToast('Bạn đã chặn quyền truy cập vị trí!', 'error');
+                  openPermissionModal();
+                  break;
+                case error.POSITION_UNAVAILABLE:
+                  showToast(
+                    'Không thể xác định vị trí hiện tại. Vui lòng thử lại!',
+                    'error',
+                  );
+                  break;
+                case error.TIMEOUT:
+                  showToast(
+                    'Yêu cầu vị trí đã hết thời gian phản hồi!',
+                    'error',
+                  );
+                  break;
+                default:
+                  showToast('Đã xảy ra lỗi khi lấy vị trí!', 'error');
+                  break;
+              }
+              resetShareButton();
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 10000,
+              maximumAge: 0,
+            },
+          );
+        } else {
+          showToast('Trình duyệt của bạn không hỗ trợ vị trí!', 'error');
+          resetShareButton();
+        }
+      }
+
+      function resetShareButton() {
+        const btn = document.getElementById('btn-share');
+        const icon = document.getElementById('btn-share-icon');
+        const text = document.getElementById('btn-share-text');
+
+        btn.disabled = false;
+        icon.className = 'fa-solid fa-crosshairs';
+        text.innerText = 'Chia sẻ vị trí của tôi';
+      }
+
+      function copyCoordinates() {
+        const text = document.getElementById('user-coords-text').innerText;
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Đã sao chép tọa độ thành công!', 'success');
+        });
+      }
+
+      function handleSmGoMapClick(event) {
+        event.preventDefault();
+        showToast(
+          'Tính năng đang phát triển, vui lòng chờ bản cập nhật tiếp theo!',
+          'error',
+        );
+      }
+    </script>
+  </body>
+</html>

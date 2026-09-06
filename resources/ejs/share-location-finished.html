@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmGo - Phản hồi đã kết thúc</title>
+    <!-- FontAwesome Icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /* ==================== 1. CẤU HÌNH CHUNG & VARIABLES ==================== */
+      :root {
+        --primary-color: #00a651;
+        --disabled-color: #64748b;
+        --warning-color: #f59e0b;
+        --bg-gradient: linear-gradient(
+          180deg,
+          #f1f5f9 0%,
+          #f8fafc 30%,
+          #f1f5f9 100%
+        );
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-sub: #64748b;
+        --border-color: #e2e8f0;
+        --radius-lg: 18px;
+        --radius-md: 12px;
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+          Arial, sans-serif;
+      }
+
+      body {
+        background: var(--bg-gradient);
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      /* ==================== 2. ADVANCED LOADING SCREEN (GREEN BRAND) ==================== */
+      #loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background:
+          linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.65)),
+          url('https://qkwp9rg7-8080.asse.devtunnels.ms/public/images/bg_splash.png')
+            no-repeat center center/cover;
+        transition:
+          opacity 0.5s ease,
+          visibility 0.5s ease;
+      }
+
+      .loader-content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        padding: 35px 30px;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 340px;
+        width: 85%;
+      }
+
+      .loader-logo-img {
+        max-width: 120px;
+        height: auto;
+        object-fit: contain;
+        margin-bottom: 8px;
+      }
+
+      .loader-slogan {
+        font-size: 13px;
+        color: var(--text-sub);
+        margin-bottom: 25px;
+      }
+
+      .spinner {
+        width: 44px;
+        height: 44px;
+        border: 4px solid #e8f5e9;
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+      }
+
+      .loader-text {
+        color: var(--text-main);
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      body.loaded #loader {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      /* ==================== 3. CONTAINER RESPONSIVE ==================== */
+      .app-container {
+        width: 100%;
+        max-width: 440px;
+        margin: 0 auto;
+      }
+
+      /* ==================== 4. HEADER ==================== */
+      .header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo-img {
+        max-width: 120px;
+        height: auto;
+        object-fit: contain;
+      }
+
+      .subtitle {
+        font-size: 14px;
+        color: var(--text-sub);
+        margin-top: 6px;
+      }
+
+      /* ==================== 5. CARD STATUS ==================== */
+      .card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        padding: 32px 24px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      .status-icon-wrapper {
+        width: 72px;
+        height: 72px;
+        background: #fef3c7;
+        color: var(--warning-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 32px;
+      }
+
+      .status-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: #0f172a;
+      }
+
+      .status-desc {
+        font-size: 14px;
+        color: var(--text-sub);
+        line-height: 1.6;
+        margin-bottom: 24px;
+      }
+
+      .reason-box {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        padding: 16px;
+        border-radius: var(--radius-md);
+        text-align: left;
+      }
+
+      .reason-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 13px;
+        color: var(--text-sub);
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+
+      .reason-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .reason-item i {
+        color: var(--disabled-color);
+        margin-top: 2px;
+      }
+
+      /* ==================== 6. FOOTER ==================== */
+      .footer-note {
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-sub);
+        margin-top: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading Screen (Xanh lá nhận diện thương hiệu) -->
+    <div id="loader">
+      <div class="loader-content">
+        <img
+          src="https://qkwp9rg7-8080.asse.devtunnels.ms/public/images/logo_text.png"
+          alt="SmGo Logo"
+          class="loader-logo-img"
+        />
+        <div class="loader-slogan">Giao nhanh - Nhẹ việc</div>
+        <div class="spinner"></div>
+        <div class="loader-text">Đang tải dữ liệu...</div>
+      </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container">
+      <!-- Header Logo -->
+      <header class="header">
+        <div class="logo">
+          <img
+            src="https://qkwp9rg7-8080.asse.devtunnels.ms/public/images/logo_text.png"
+            alt="SmGo Logo"
+            class="logo-img"
+          />
+        </div>
+        <p class="subtitle">Giao nhanh - Nhẹ việc</p>
+      </header>
+
+      <!-- Block Trạng thái Không còn hoạt động -->
+      <div class="card">
+        <div class="status-icon-wrapper">
+          <i class="fa-solid fa-hourglass-end"></i>
+        </div>
+        <h2 class="status-title">Trang chia sẻ đã kết thúc</h2>
+        <p class="status-desc">
+          Phiên chia sẻ vị trí này hiện không còn hoạt động hoặc đã bị đóng bởi
+          hệ thống.
+        </p>
+
+        <div class="reason-box">
+          <div class="reason-item">
+            <i class="fa-solid fa-clock"></i>
+            <span>Thời hạn chia sẻ vị trí tạm thời đã trôi qua.</span>
+          </div>
+          <div class="reason-item">
+            <i class="fa-solid fa-user-shield"></i>
+            <span
+              >Thông tin vị trí của bạn đã được bảo mật và tự động xóa.</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-note">
+        <i class="fa-solid fa-shield-halved"></i> SmGo - Cam kết bảo mật thông
+        tin người dùng
+      </div>
+    </div>
+
+    <!-- Script xử lý hiển thị -->
+    <script>
+      window.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+          document.body.classList.add('loaded');
+        }, 500);
+      });
+    </script>
+  </body>
+</html>

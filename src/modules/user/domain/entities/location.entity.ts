@@ -17,3 +17,8 @@ export interface TLocation {
   updatedAt: Date;
   deletedAt: Date | null;
 }
+
+export interface TCoordinate {
+  lat: number;
+  lng: number;
+}

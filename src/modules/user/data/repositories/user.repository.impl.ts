@@ -4,6 +4,7 @@ import { Brackets, Repository } from 'typeorm';
 import {
   CreateUserData,
   FindUsersByQuery,
+  UpdateProfileData,
   UserRepository,
 } from '../../domain/repositories/user.repository';
 import { UserModel } from '../models/user.model';
@@ -45,5 +46,14 @@ export class UserRepositoryImpl implements UserRepository {
         }),
       )
       .getMany();
+  }
+
+  async update(userId: string, data: UpdateProfileData): Promise<void> {
+    await this.usersRepo.save(
+      this.usersRepo.create({
+        ...data,
+        id: userId,
+      }),
+    );
   }
 }

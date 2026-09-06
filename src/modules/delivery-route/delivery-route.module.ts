@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DeliveryRouteController } from './presentation/controllers/delivery-route.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DeliveryRouteRepository } from './domain/repositories/delivery-route.repository';
@@ -34,8 +34,8 @@ import { PaymentModule } from '../payment/payment.module';
     StorageModule,
     UnitOfWorkModule,
     ConfigModule,
-    UserModule,
-    PaymentModule
+    forwardRef(() => UserModule),
+    PaymentModule,
   ],
   controllers: [DeliveryRouteController],
   providers: [
@@ -64,8 +64,8 @@ import { PaymentModule } from '../payment/payment.module';
     SortDeliveryOrdersUsecase,
     ConfirmSortedDeliveryOrdersUsecase,
     CreateDeliveryRouteWithOrdersUsecase,
-    CheckPlanUsecase
+    CheckPlanUsecase,
   ],
-  exports: [],
+  exports: [GetDeliveryRoutesUsecase, GetDeliveryOrdersUsecase],
 })
 export class DeliveryRouteModule {}

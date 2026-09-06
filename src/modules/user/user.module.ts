@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CreateUserUsecase } from './domain/usecases/create-user.usecase';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './presentation/controllers/user.controller';
@@ -19,13 +19,26 @@ import { GetLocationSuggestionUsecase } from './domain/usecases/get-location-sug
 import { DeleteLocationsUsecase } from './domain/usecases/delete-locations.usecase';
 import { UnitOfWorkModule } from '@/core/unit-of-work/unit-of-work.module';
 import { PaymentModule } from '../payment/payment.module';
+import { UpdateProfileUsecase } from './domain/usecases/update-profile.usecase';
+import { GetShareLocationUrlUsecase } from './domain/usecases/get-share-location-url.usecase';
+import { GetShareLocationUsecase } from './domain/usecases/get-share-location.usecase';
+import { SaveShareLocationUsecase } from './domain/usecases/save-share-location.usecase';
+import { CheckShareLocationTokenUsecase } from './domain/usecases/check-share-location-token.usecase';
+import { ShareLocationTokenRepository } from './domain/repositories/share-location-token.repository';
+import { ShareLocationTokenRepositoryImpl } from './data/repositories/share-location-token.repository.impl';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@/core/config/config.module';
+import { DeliveryRouteModule } from '../delivery-route/delivery-route.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserModel, LocationModel]),
     StorageModule,
     UnitOfWorkModule,
-    PaymentModule
+    PaymentModule,
+    JwtModule,
+    ConfigModule,
+    forwardRef(() => DeliveryRouteModule),
   ],
   controllers: [UserController, LocationController],
   providers: [
@@ -37,6 +50,10 @@ import { PaymentModule } from '../payment/payment.module';
       provide: LocationRepository,
       useClass: LocationRepositoryImpl,
     },
+    {
+      provide: ShareLocationTokenRepository,
+      useClass: ShareLocationTokenRepositoryImpl,
+    },
     CreateUserUsecase,
     GetUsersUsecase,
     GetLocationsUsecase,
@@ -45,6 +62,11 @@ import { PaymentModule } from '../payment/payment.module';
     DeleteLocationUsecase,
     DeleteLocationsUsecase,
     GetLocationSuggestionUsecase,
+    UpdateProfileUsecase,
+    GetShareLocationUrlUsecase,
+    GetShareLocationUsecase,
+    SaveShareLocationUsecase,
+    CheckShareLocationTokenUsecase,
   ],
   exports: [CreateUserUsecase, GetUsersUsecase, GetLocationsUsecase],
 })
