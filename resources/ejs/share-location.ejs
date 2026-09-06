@@ -2,25 +2,43 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <meta property="og:title" content="Chia sẻ vị trí cho người giao hàng" />
+
     <meta
       property="og:description"
       content="Nguời giao hàng cần chính xác vị trí của bạn. Vui lòng nhấn vào đây để chia sẻ vị trí cho người giao hàng."
     />
+
     <meta property="og:image" content="<%= shareLocationPreviewUrl %>" />
+
     <meta property="og:image:width" content="1200" />
+
     <meta property="og:image:height" content="630" />
+
     <meta property="og:url" content="<%= shareLocationUrl %>" />
+
     <meta property="og:type" content="website" />
+
     <title>SmGo - Giao nhanh & Nhẹ việc</title>
+
     <!-- FontAwesome Icon -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+
+    <!-- Fancybox CDN - Preview ảnh với zoom, pinch-to-zoom, pan -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
+    />
+
     <style>
       /* ==================== 1. CẤU HÌNH CHUNG & VARIABLES ==================== */
+
       :root {
         --primary-color: #00a651;
         --primary-hover: #008d44;
@@ -59,6 +77,7 @@
       }
 
       /* ==================== 2. ADVANCED LOADING SCREEN ==================== */
+
       #loader {
         position: fixed;
         top: 0;
@@ -125,6 +144,7 @@
         0% {
           transform: rotate(0deg);
         }
+
         100% {
           transform: rotate(360deg);
         }
@@ -136,6 +156,7 @@
       }
 
       /* ==================== 3. CONTAINER RESPONSIVE ==================== */
+
       .app-container {
         width: 100%;
         max-width: 480px;
@@ -144,6 +165,7 @@
       }
 
       /* ==================== 4. HEADER ==================== */
+
       .header {
         text-align: center;
         margin-bottom: 20px;
@@ -168,6 +190,7 @@
       }
 
       /* ==================== 5. CARD COMPONENT ==================== */
+
       .card {
         background: var(--card-bg);
         border-radius: var(--radius-lg);
@@ -193,6 +216,7 @@
       }
 
       /* ==================== 6. LOCATION CARD ==================== */
+
       .location-card {
         text-align: center;
       }
@@ -328,6 +352,7 @@
       }
 
       /* ==================== 7. ORDER INFO ==================== */
+
       .order-content {
         display: grid;
         grid-template-columns: 100px 1fr;
@@ -340,6 +365,12 @@
         border-radius: var(--radius-md);
         object-fit: cover;
         background-color: #eee;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+
+      .product-img:hover {
+        transform: scale(1.03);
       }
 
       .info-list {
@@ -374,6 +405,7 @@
       }
 
       /* ==================== 8. RECEIVER INFO ==================== */
+
       .receiver-row {
         display: flex;
         justify-content: space-between;
@@ -412,6 +444,7 @@
       }
 
       /* ==================== 9. TOAST NOTIFICATION ==================== */
+
       #toast-container {
         position: fixed;
         bottom: 20px;
@@ -441,6 +474,7 @@
       .toast.success {
         border-left-color: var(--primary-color);
       }
+
       .toast.success i {
         color: var(--primary-color);
       }
@@ -448,6 +482,7 @@
       .toast.error {
         border-left-color: #ef4444;
       }
+
       .toast.error i {
         color: #ef4444;
       }
@@ -457,6 +492,7 @@
           transform: translateX(100%);
           opacity: 0;
         }
+
         to {
           transform: translateX(0);
           opacity: 1;
@@ -464,6 +500,7 @@
       }
 
       /* ==================== 10. MODAL HƯỚNG DẪN BẬT QUYỀN ==================== */
+
       .modal-overlay {
         position: fixed;
         top: 0;
@@ -580,12 +617,14 @@
       }
 
       /* ==================== 11. RESPONSIVE BREAKPOINTS ==================== */
+
       @media (max-width: 480px) {
         #toast-container {
           left: 15px;
           right: 15px;
           bottom: 15px;
         }
+
         .toast {
           width: 100%;
         }
@@ -595,13 +634,16 @@
         .app-container {
           max-width: 700px;
         }
+
         .order-content {
           grid-template-columns: 140px 1fr;
         }
+
         .product-img {
           width: 140px;
           height: 140px;
         }
+
         .info-list {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -613,18 +655,23 @@
         .app-container {
           max-width: 800px;
         }
+
         .card {
           padding: 25px;
         }
       }
     </style>
   </head>
+
   <body>
     <div id="loader">
       <div class="loader-content">
         <img src="<%= logoUrl %>" alt="SmGo Logo" class="loader-logo-img" />
+
         <div class="loader-slogan">Giao nhanh - Nhẹ việc</div>
+
         <div class="spinner"></div>
+
         <div class="loader-text">Đang tải dữ liệu...</div>
       </div>
     </div>
@@ -638,31 +685,39 @@
         <div class="modal-icon">
           <i class="fa-solid fa-location-crosshairs"></i>
         </div>
+
         <h3 class="modal-title">Cần quyền truy cập vị trí</h3>
+
         <p class="modal-desc">
           Bạn đã từ chối quyền định vị trước đó. Vui lòng cho phép trình duyệt
           truy cập vị trí để hoàn tất giao nhận hàng.
         </p>
+
         <div class="guide-steps">
           <div class="guide-step-item">
             <span class="step-num">1</span>
-            <span
-              >Bấm vào <b>Biểu tượng Cài đặt / Khóa</b> ở góc thanh địa chỉ
-              trình duyệt.</span
-            >
+
+            <span>
+              Bấm vào <b>Biểu tượng Cài đặt / Khóa</b> ở góc thanh địa chỉ trình
+              duyệt.
+            </span>
           </div>
+
           <div class="guide-step-item">
             <span class="step-num">2</span>
-            <span
-              >Tìm mục <b>Vị trí (Location)</b> và chọn
-              <b>Cho phép (Allow)</b>.</span
-            >
+
+            <span>
+              Tìm mục <b>Vị trí (Location)</b> và chọn <b>Cho phép (Allow)</b>.
+            </span>
           </div>
+
           <div class="guide-step-item">
             <span class="step-num">3</span>
+
             <span>Tải lại trang và bấm nút <b>Chia sẻ vị trí</b>.</span>
           </div>
         </div>
+
         <button class="modal-btn" onclick="closePermissionModal()">
           Đã hiểu, đóng hướng dẫn
         </button>
@@ -676,6 +731,7 @@
         <div class="logo">
           <img src="<%= logoUrl %>" alt="SmGo Logo" class="logo-img" />
         </div>
+
         <p class="subtitle">Giao nhanh - Nhẹ việc</p>
       </header>
 
@@ -686,7 +742,9 @@
           <div class="location-icon-wrapper">
             <i class="fa-solid fa-location-dot"></i>
           </div>
+
           <h2 class="location-title">Người nhận cần vị trí của bạn</h2>
+
           <p class="location-desc">
             Vui lòng chia sẻ vị trí hiện tại để người gửi dễ dàng giao hàng cho
             bạn.
@@ -698,6 +756,7 @@
             onclick="handleShareLocation()"
           >
             <i class="fa-solid fa-crosshairs" id="btn-share-icon"></i>
+
             <span id="btn-share-text">Chia sẻ vị trí của tôi</span>
           </button>
         </div>
@@ -707,7 +766,9 @@
           <div class="location-icon-wrapper">
             <i class="fa-solid fa-location-dot"></i>
           </div>
+
           <h2 class="location-title">Bạn đang chia sẻ vị trí</h2>
+
           <p class="location-desc">
             Người giao hàng có thể xem vị trí hiện tại của bạn để dễ dàng giao
             hàng.
@@ -716,8 +777,10 @@
           <div class="coords-box">
             <div>
               <div class="coords-label">Tọa độ hiện tại</div>
+
               <div class="coords-value" id="user-coords-text">--</div>
             </div>
+
             <button class="btn-copy" onclick="copyCoordinates()">
               <i class="fa-regular fa-copy"></i> Sao chép
             </button>
@@ -735,8 +798,10 @@
                 alt="Google Maps Logo"
                 style="width: 16px"
               />
+
               Đi đến Google Maps
             </a>
+
             <a
               href="#"
               id="btn-smgo-map"
@@ -748,36 +813,51 @@
                 alt="SmGo Logo"
                 style="width: 16px"
               />
+
               Đi đến SmGo Maps
             </a>
           </div>
         </div>
 
         <div class="privacy-note">
-          <i class="fa-solid fa-lock"></i> Vị trí của bạn chỉ được chia sẻ tạm
-          thời cho đơn hàng này và được bảo mật tuyệt đối.
+          <i class="fa-solid fa-lock"></i>
+          Vị trí của bạn chỉ được chia sẻ tạm thời cho đơn hàng này và được bảo
+          mật tuyệt đối.
         </div>
       </div>
 
       <!-- Block Thông Tin Đơn Hàng -->
       <div class="card">
         <div class="card-header">
-          <i class="fa-solid fa-box"></i> Thông tin đơn hàng
+          <i class="fa-solid fa-box"></i>
+          Thông tin đơn hàng
         </div>
+
         <div class="order-content">
-          <img src="<%= orderMediaUrl %>" alt="Sản phẩm" class="product-img" />
+          <img
+            src="<%= orderMediaUrl %>"
+            alt="Sản phẩm"
+            class="product-img"
+            onclick="openImageModal(this.src)"
+          />
+
           <div class="info-list">
             <div class="info-item">
               <i class="fa-solid fa-barcode"></i>
+
               <div>
                 <div class="info-label">Mã vận đơn</div>
+
                 <div class="info-val"><%= orderCode %></div>
               </div>
             </div>
+
             <div class="info-item">
               <i class="fa-solid fa-cube"></i>
+
               <div>
                 <div class="info-label">Tên sản phẩm</div>
+
                 <div class="info-val"><%= orderName %></div>
               </div>
             </div>
@@ -788,80 +868,105 @@
       <!-- Block Thông Tin Người Nhận -->
       <div class="card">
         <div class="card-header">
-          <i class="fa-solid fa-user-large"></i> Thông tin người nhận
+          <i class="fa-solid fa-user-large"></i>
+          Thông tin người nhận
         </div>
+
         <div class="receiver-row">
           <div class="info-list">
             <div>
               <div class="info-label">Họ và tên</div>
+
               <div class="info-val"><%= contactName %></div>
             </div>
+
             <div>
               <div class="info-label">Số điện thoại</div>
+
               <div class="info-val"><%= contactPhone %></div>
             </div>
+
             <div>
               <div class="info-label">Địa chỉ</div>
+
               <div class="info-val"><%= address %></div>
             </div>
           </div>
+
           <div class="action-btns">
-            <a href="tel:<%= contactPhone %>" class="icon-btn"
-              ><i class="fa-solid fa-phone"></i
-            ></a>
-            <a href="sms:<%= contactPhone %>" class="icon-btn"
-              ><i class="fa-solid fa-comment-dots"></i
-            ></a>
+            <a href="tel:<%= contactPhone %>" class="icon-btn">
+              <i class="fa-solid fa-phone"></i>
+            </a>
+
+            <a href="sms:<%= contactPhone %>" class="icon-btn">
+              <i class="fa-solid fa-comment-dots"></i>
+            </a>
           </div>
         </div>
       </div>
 
       <!-- Footer -->
       <div class="footer-note">
-        <i class="fa-solid fa-shield-halved"></i> SmGo cam kết bảo vệ thông tin
-        của bạn
+        <i class="fa-solid fa-shield-halved"></i>
+        SmGo cam kết bảo vệ thông tin của bạn
       </div>
     </div>
+
+    <!-- Fancybox CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 
     <!-- SCRIPT XỬ LÝ LOGIC -->
     <script>
       // ==================== 1. GIẢ LẬP API (MOCK API) ====================
+
       async function fetchUserLocationAPI() {
         const response = await fetch('<%= getSharedLocationUrl %>', {
           method: 'GET',
+
           headers: {
             'Content-Type': 'application/json',
           },
         });
+
         const data = await response.json();
+
         if (!response.ok) {
           throw new Error(data?.error?.message);
         }
+
         return data;
       }
 
       async function saveLocationAPI(coords) {
         const response = await fetch('<%= saveShareLocationUrl %>', {
           method: 'POST',
+
           headers: {
             'Content-Type': 'application/json',
           },
+
           body: JSON.stringify({
             lat: coords.latitude,
             lng: coords.longitude,
           }),
         });
+
         const data = await response.json();
+
         if (!response.ok) {
           throw new Error(data?.error?.message);
         }
+
         return data.data;
       }
 
       // ==================== 2. HIỂN THỊ THÔNG BÁO (TOAST) ====================
+
       function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
+
         const toast = document.createElement('div');
+
         toast.className = `toast ${type}`;
 
         const icon =
@@ -870,15 +975,18 @@
             : '<i class="fa-solid fa-triangle-exclamation"></i>';
 
         toast.innerHTML = `${icon} <span>${message}</span>`;
+
         container.appendChild(toast);
 
         setTimeout(() => {
           toast.style.animation = 'slideIn 0.3s ease reverse forwards';
+
           setTimeout(() => toast.remove(), 300);
         }, 3500);
       }
 
       // ==================== 3. MODAL ĐIỀU KHIỂN ====================
+
       function openPermissionModal() {
         document.getElementById('permission-modal').classList.add('active');
       }
@@ -887,10 +995,53 @@
         document.getElementById('permission-modal').classList.remove('active');
       }
 
-      // ==================== 4. XỬ LÝ KHỞI TẠO TRANG ====================
+      // ==================== 4. PREVIEW ẢNH ĐƠN HÀNG ====================
+      // Sử dụng Fancybox CDN:
+      // - Zoom bằng con lăn chuột
+      // - Pinch-to-zoom trên điện thoại
+      // - Kéo ảnh khi đã phóng to
+      // - Double click / double tap để zoom
+      // - Nút Close nằm cố định đúng chức năng
+      // - Chỉ ảnh được zoom, không zoom toàn bộ trang
+
+      function openImageModal(src) {
+        Fancybox.show(
+          [
+            {
+              src: src,
+              type: 'image',
+            },
+          ],
+          {
+            Carousel: {
+              infinite: false,
+            },
+
+            Images: {
+              Panzoom: {
+                maxScale: 5,
+              },
+            },
+
+            Toolbar: {
+              display: {
+                left: [],
+                middle: [],
+                right: ['zoom', 'fullscreen', 'close'],
+              },
+            },
+
+            contentClick: 'toggleZoom',
+          },
+        );
+      }
+
+      // ==================== 5. XỬ LÝ KHỞI TẠO TRANG ====================
+
       window.addEventListener('DOMContentLoaded', async function () {
         try {
           const response = await fetchUserLocationAPI();
+
           if (response.data) {
             renderSharedUI(response.data.lat, response.data.lng);
           } else {
@@ -898,6 +1049,7 @@
           }
         } catch (error) {
           showToast('Không thể tải thông tin vị trí!', 'error');
+
           renderUnsharedUI();
         } finally {
           document.body.classList.add('loaded');
@@ -906,25 +1058,34 @@
 
       function renderUnsharedUI() {
         document.getElementById('state-unshared').style.display = 'block';
+
         document.getElementById('state-shared').style.display = 'none';
       }
 
       function renderSharedUI(lat, lng) {
         const coordsStr = `${lat}, ${lng}`;
+
         document.getElementById('user-coords-text').innerText = coordsStr;
+
         document.getElementById('btn-google-map').href =
           `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving`;
 
         document.getElementById('state-unshared').style.display = 'none';
+
         document.getElementById('state-shared').style.display = 'block';
       }
 
       async function handleShareLocation() {
         const btn = document.getElementById('btn-share');
+
         const icon = document.getElementById('btn-share-icon');
+
         const text = document.getElementById('btn-share-text');
+
         btn.disabled = true;
+
         icon.className = 'fa-solid fa-spinner fa-spin';
+
         text.innerText = 'Đang lấy vị trí...';
 
         if ('geolocation' in navigator) {
@@ -932,12 +1093,15 @@
             async (position) => {
               const coords = {
                 latitude: position.coords.latitude,
+
                 longitude: position.coords.longitude,
               };
 
               try {
                 await saveLocationAPI(coords);
+
                 renderSharedUI(coords.latitude, coords.longitude);
+
                 showToast('Chia sẻ vị trí thành công!', 'success');
               } catch (err) {
                 showToast(err.message || 'Lỗi khi lưu vị trí!', 'error');
@@ -945,54 +1109,73 @@
                 resetShareButton();
               }
             },
+
             (error) => {
               switch (error.code) {
                 case error.PERMISSION_DENIED:
                   showToast('Bạn đã chặn quyền truy cập vị trí!', 'error');
+
                   openPermissionModal();
+
                   break;
+
                 case error.POSITION_UNAVAILABLE:
                   showToast(
                     'Không thể xác định vị trí hiện tại. Vui lòng thử lại!',
                     'error',
                   );
+
                   break;
+
                 case error.TIMEOUT:
                   showToast(
                     'Yêu cầu vị trí đã hết thời gian phản hồi!',
                     'error',
                   );
+
                   break;
+
                 default:
                   showToast('Đã xảy ra lỗi khi lấy vị trí!', 'error');
+
                   break;
               }
+
               resetShareButton();
             },
+
             {
               enableHighAccuracy: true,
+
               timeout: 10000,
+
               maximumAge: 0,
             },
           );
         } else {
           showToast('Trình duyệt của bạn không hỗ trợ vị trí!', 'error');
+
           resetShareButton();
         }
       }
 
       function resetShareButton() {
         const btn = document.getElementById('btn-share');
+
         const icon = document.getElementById('btn-share-icon');
+
         const text = document.getElementById('btn-share-text');
 
         btn.disabled = false;
+
         icon.className = 'fa-solid fa-crosshairs';
+
         text.innerText = 'Chia sẻ vị trí của tôi';
       }
 
       function copyCoordinates() {
         const text = document.getElementById('user-coords-text').innerText;
+
         navigator.clipboard.writeText(text).then(() => {
           showToast('Đã sao chép tọa độ thành công!', 'success');
         });
@@ -1000,6 +1183,7 @@
 
       function handleSmGoMapClick(event) {
         event.preventDefault();
+
         showToast(
           'Tính năng đang phát triển, vui lòng chờ bản cập nhật tiếp theo!',
           'error',

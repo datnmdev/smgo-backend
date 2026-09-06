@@ -66,6 +66,10 @@ import { PaymentModule } from '../payment/payment.module';
     CreateDeliveryRouteWithOrdersUsecase,
     CheckPlanUsecase,
   ],
-  exports: [GetDeliveryRoutesUsecase, GetDeliveryOrdersUsecase],
+  exports: [
+    GetDeliveryRoutesUsecase,
+    GetDeliveryOrdersUsecase,
+    CheckPlanUsecase,
+  ],
 })
 export class DeliveryRouteModule {}

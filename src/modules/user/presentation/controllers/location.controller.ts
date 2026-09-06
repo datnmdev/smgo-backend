@@ -35,6 +35,7 @@ import { DeliveryOrderNotFoundException } from '@/modules/delivery-route/domain/
 import { GetDeliveryOrdersUsecase } from '@/modules/delivery-route/domain/usecases/get-delivery-orders.usecase';
 import { ConfigService } from '@/core/config/config.service';
 import { Request, Response } from 'express';
+import { CheckPlanUsecase } from '@/modules/delivery-route/domain/usecases/check-plan.usecase';
 
 @Controller('location')
 export class LocationController {
@@ -47,6 +48,7 @@ export class LocationController {
     private readonly getDeliveryRouteUsecase: GetDeliveryRoutesUsecase,
     private readonly getDeliveryOrdersUsecase: GetDeliveryOrdersUsecase,
     private readonly configService: ConfigService,
+    private readonly checkPlanUsecase: CheckPlanUsecase,
   ) {}
 
   @Get('suggestions')
@@ -69,6 +71,11 @@ export class LocationController {
     @AuthPayload() authPayload: JwtPayload,
     @Query() getShareLocationUrlQuery: GetShareLocationUrlQueryReqDto,
   ): Promise<AppResponse> {
+    // Kiểm tra plan
+    await this.checkPlanUsecase.execute(authPayload.userId, {
+      requiresLocationSharing: true,
+    });
+
     return AppResponse.ok(
       await this.getShareLocationUrlUsecase.execute(
         authPayload.userId,
@@ -157,7 +164,9 @@ export class LocationController {
     @Query() getShareLocationQuery: GetShareLocationQueryReqDto,
   ): Promise<AppResponse> {
     return AppResponse.ok(
-      await this.getShareLocationUsecase.execute(getShareLocationQuery.tokenKey),
+      await this.getShareLocationUsecase.execute(
+        getShareLocationQuery.tokenKey,
+      ),
     );
   }
 
