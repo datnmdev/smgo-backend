@@ -19,14 +19,9 @@ export class GetPresignedDownloadUrlUsecase {
     if (!media) {
       throw new MediaNotFoundException();
     }
-    const result = await this.storageRepo.getPresignedDownloadUrl({
+    return await this.storageRepo.getPresignedDownloadUrl({
       fileKey: media.fileKey,
       expiry: 60 * 60,
     });
-
-    return result.replace(
-      'http://localhost:9000',
-      'https://qkwp9rg7-9000.asse.devtunnels.ms',
-    );
   }
 }

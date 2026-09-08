@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { StorageRepository } from './domain/repositories/storage.repository';
-import { StorageRepositoryImpl } from './data/repositories/storage.repository.impl';
 import { ConfigModule } from '@/core/config/config.module';
 import { StorageController } from './presentation/controllers/storage.controller';
 import { GetPresignedUploadUrlUsecase } from './domain/usecases/get-presigned-upload-url.usecase';
@@ -11,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AttachMediaUsecase } from './domain/usecases/attach-media.usecase';
 import { GetMediaUsecase } from './domain/usecases/get-media.usecase';
 import { MediaModel } from './data/models/media.model';
+import { R2StorageRepositoryImpl } from './data/repositories/r2-storage.repository.impl';
 
 @Module({
   imports: [ConfigModule, TypeOrmModule.forFeature([MediaModel])],
@@ -19,7 +19,7 @@ import { MediaModel } from './data/models/media.model';
     // Repositories
     {
       provide: StorageRepository,
-      useClass: StorageRepositoryImpl,
+      useClass: R2StorageRepositoryImpl,
     },
     {
       provide: MediaRepository,

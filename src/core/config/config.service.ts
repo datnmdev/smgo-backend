@@ -64,6 +64,18 @@ export class ConfigService {
     };
   }
 
+  getR2Config() {
+    return {
+      endPoint: this.nestConfigService.get('R2_ENDPOINT'),
+      port: Number(this.nestConfigService.get('R2_PORT')),
+      useSSL: true,
+      accessKey: this.nestConfigService.get('R2_ACCESS_KEY_ID'),
+      secretKey: this.nestConfigService.get('R2_SECRET_ACCESS_KEY'),
+      region: 'auto',
+      bucket: this.nestConfigService.get('R2_BUCKET'),
+    };
+  }
+
   getAiConfig() {
     return {
       qwenBaseUrl: this.nestConfigService.get('QWEN_BASE_URL'),

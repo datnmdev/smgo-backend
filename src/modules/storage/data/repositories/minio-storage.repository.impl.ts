@@ -4,7 +4,7 @@ import { ConfigService } from '@/core/config/config.service';
 import { PresignedDownloadUrlOptions, PresignedUploadUrlOptions, StorageRepository } from '../../domain/repositories/storage.repository';
 
 @Injectable()
-export class StorageRepositoryImpl implements StorageRepository {
+export class MinioStorageRepositoryImpl implements StorageRepository {
   constructor(
     private readonly configService: ConfigService,
     private readonly minioService: NestMinioService,

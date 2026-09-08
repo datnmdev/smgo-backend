@@ -25,10 +25,7 @@ export class GetPresignedUploadUrlUsecase {
     });
     return {
       mediaId: media.id,
-      uploadUrl: presignedUploadUrl.replaceAll(
-        'http://localhost:9000',
-        'https://qkwp9rg7-9000.asse.devtunnels.ms',
-      ),
+      uploadUrl: presignedUploadUrl,
     };
   }
 }

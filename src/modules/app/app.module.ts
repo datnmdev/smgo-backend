@@ -37,7 +37,7 @@ import path from 'path';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
-        configService.getMinioConfig(),
+        configService.getR2Config(),
     }),
     AuthModule,
     UserModule,
