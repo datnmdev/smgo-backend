@@ -14,12 +14,8 @@ export class NotificationService implements OnModuleInit, OnModuleDestroy {
   }>();
 
   constructor(private readonly configService: ConfigService) {
-    const redisConfig = {
-      host: configService.getRedisConfig().host,
-      port: configService.getRedisConfig().port,
-    };
-    this.redisPublisher = new Redis(redisConfig);
-    this.redisSubscriber = new Redis(redisConfig);
+    this.redisPublisher = new Redis(configService.getRedisConfig().options);
+    this.redisSubscriber = new Redis(configService.getRedisConfig().options);
   }
 
   async onModuleInit() {

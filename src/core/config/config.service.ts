@@ -1,3 +1,11 @@
+import { AppVersionModel } from '@/modules/app-version/data/models/app-version.model';
+import { DeliveryOrderModel } from '@/modules/delivery-route/data/models/delivery-order.model';
+import { DeliveryRouteModel } from '@/modules/delivery-route/data/models/delivery-route.model';
+import { PaymentTransactionModel } from '@/modules/payment/data/models/payment-transaction.model';
+import { SubscriptionModel } from '@/modules/payment/data/models/subscription.model';
+import { MediaModel } from '@/modules/storage/data/models/media.model';
+import { LocationModel } from '@/modules/user/data/models/location.model';
+import { UserModel } from '@/modules/user/data/models/user.model';
 import { Injectable } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 
@@ -25,7 +33,16 @@ export class ConfigService {
       username: this.nestConfigService.get('DB_USER'),
       password: this.nestConfigService.get('DB_PASS'),
       database: this.nestConfigService.get('DB_NAME'),
-      entities: ['dist/**/models/*.{ts,js}'],
+      entities: [
+        UserModel,
+        LocationModel,
+        DeliveryRouteModel,
+        DeliveryOrderModel,
+        MediaModel,
+        AppVersionModel,
+        SubscriptionModel,
+        PaymentTransactionModel
+      ],
       synchronize: false,
     };
   }
@@ -33,9 +50,11 @@ export class ConfigService {
   getRedisConfig() {
     return {
       type: 'single',
-      host: this.nestConfigService.get('REDIS_PASS'),
-      port: Number(this.nestConfigService.get('REDIS_PORT')),
-      url: `redis://:${this.nestConfigService.get('REDIS_PASS')}@${this.nestConfigService.get('REDIS_HOST')}:${Number(this.nestConfigService.get('REDIS_PORT'))}`,
+      options: {
+        host: this.nestConfigService.get<string>('REDIS_HOST'),
+        port: Number(this.nestConfigService.get<string>('REDIS_PORT')),
+        password: this.nestConfigService.get<string>('REDIS_PASS'),
+      },
     };
   }
 
