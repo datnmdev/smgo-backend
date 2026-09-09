@@ -37,7 +37,11 @@ export class VerifySubscriptionUsecase {
             userId,
           })
         )?.[0];
+        console.log('CURRSUBSCRIPTION::::', currSubscription);
+        
         if (!currSubscription) {
+          console.log(111111111111);
+          
           await this.subscriptionRepo.createSubscription(
             {
               userId,
@@ -51,6 +55,7 @@ export class VerifySubscriptionUsecase {
             uowManager.manager,
           );
         } else {
+          console.log(222222222222);
           await this.subscriptionRepo.updateSubscription(
             currSubscription.id,
             {
@@ -69,7 +74,9 @@ export class VerifySubscriptionUsecase {
         );
         await this.uowService.commit();
         return true;
-      } catch {
+      } catch (e) {
+        console.log('VERIFY-ERROR::::', e);
+        
         await this.uowService.rollback();
         return false;
       } finally {
