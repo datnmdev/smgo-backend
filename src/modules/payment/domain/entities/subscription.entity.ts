@@ -2,7 +2,7 @@ export type SubscriptionProductId =
   'smgo_basic' | 'smgo_standard' | 'smgo_plus' | 'smgo_premium';
 
 export type SubscriptionStatus =
-  'ACTIVE' | 'CANCELED' | 'EXPIRED' | 'IN_GRACE_PERIOD' | 'ON_HOLD';
+  'ACTIVE' | 'CANCELED' | 'EXPIRED' | 'IN_GRACE_PERIOD' | 'ON_HOLD' | 'PAUSED';
 
 export interface TSubscription {
   id: string;

@@ -4,17 +4,14 @@ import {
   CreateSubscriptionData,
   FindSubscriptionsByQuery,
   Platform,
+  SubscriptionPurchaseResult,
   SubscriptionRepository,
   UpdateSubscriptionData,
-  VerifySubscriptionResult,
 } from '../../domain/repositories/subscription.repository';
 import { androidpublisher_v3, google } from 'googleapis';
 import { ConfigService } from '@/core/config/config.service';
 import path from 'path';
 import { UnsupportedPlatformException } from '../exceptions/unsupported-platform.exception';
-import { SubscriptionInactiveException } from '../exceptions/subscription-inactive.exception';
-import { SubscriptionExpiryTimeMissingException } from '../exceptions/subscription-expiry-time-missing.exception';
-import { SubscriptionProductIdMissingException } from '../exceptions/subscription-product-id-missing.exception';
 import { SubscriptionBasePlanIdMissingException } from '../exceptions/subscription-base-plan-id-missing.exception';
 import { SubscriptionBasePlanNotFoundException } from '../exceptions/subscription-base-plan-not-found.exception';
 import { SubscriptionBasePlanPriceMissingException } from '../exceptions/subscription-base-plan-price-missing.exception';
@@ -50,7 +47,7 @@ export class SubscriptionRepositoryImpl implements SubscriptionRepository {
     });
   }
 
-  async getGoogleSubscriptionInfo(
+  private async getGoogleSubscriptionInfo(
     packageName: string,
     purchaseToken: string,
   ): Promise<androidpublisher_v3.Schema$SubscriptionPurchaseV2> {
@@ -58,86 +55,131 @@ export class SubscriptionRepositoryImpl implements SubscriptionRepository {
       packageName,
       token: purchaseToken,
     });
+
     return response.data;
   }
 
-  async verify(
+  async getSubscriptionPurchase(
     platform: Platform,
     purchaseToken: string,
-  ): Promise<VerifySubscriptionResult<AndroidTransaction>> {
+  ): Promise<SubscriptionPurchaseResult<AndroidTransaction>> {
     if (platform === 'android') {
-      return this.verifyAndroidSubscription(purchaseToken);
+      return this.getAndroidSubscriptionPurchase(purchaseToken);
     }
 
     throw new UnsupportedPlatformException();
   }
 
-  private async verifyAndroidSubscription(
+  private async getAndroidSubscriptionPurchase(
     purchaseToken: string,
-  ): Promise<VerifySubscriptionResult<AndroidTransaction>> {
+  ): Promise<SubscriptionPurchaseResult<AndroidTransaction>> {
     const { packageName } = this.configService.googleSubscriptionConfig();
-    const subscription = await this.getGoogleSubscriptionInfo(
+
+    const purchase = await this.getGoogleSubscriptionInfo(
       packageName,
       purchaseToken,
     );
-    if (subscription.subscriptionState !== 'SUBSCRIPTION_STATE_ACTIVE') {
-      throw new SubscriptionInactiveException();
+
+    const lineItem = purchase.lineItems?.[0] ?? null;
+
+    const productId =
+      (lineItem?.productId as SubscriptionProductId | undefined) ?? null;
+
+    const orderId = lineItem?.latestSuccessfulOrderId ?? null;
+
+    const expiryTime = lineItem?.expiryTime ?? null;
+
+    const startsAt = purchase.startTime ? new Date(purchase.startTime) : null;
+
+    const expiresAt = expiryTime ? new Date(expiryTime) : null;
+
+    const isAutoRenew = lineItem?.autoRenewingPlan?.autoRenewEnabled ?? null;
+
+    /*
+     * Account identifier mà Flutter đã gửi vào
+     * PurchaseParam.applicationUserName.
+     *
+     * Backend sẽ dùng giá trị này để xác minh
+     * purchase thuộc đúng user SmGo.
+     */
+    const externalAccountId =
+      purchase.externalAccountIdentifiers?.obfuscatedExternalAccountId ?? null;
+    const outOfAppPurchaseContext = purchase.outOfAppPurchaseContext
+      ? {
+          expiredPurchaseToken:
+            purchase.outOfAppPurchaseContext.expiredPurchaseToken ?? null,
+
+          expiredExternalAccountId:
+            purchase.outOfAppPurchaseContext.expiredExternalAccountIdentifiers
+              ?.obfuscatedExternalAccountId ?? null,
+        }
+      : null;
+
+    let priceCurrency: string | null = null;
+    let amount: number | null = null;
+
+    const basePlanId = lineItem?.offerDetails?.basePlanId ?? null;
+
+    /*
+     * Price chỉ là metadata bổ sung.
+     * Không được làm purchase extraction fail.
+     */
+    if (productId && basePlanId) {
+      try {
+        const price = await this.getAndroidProductPrice({
+          productId,
+          basePlanId,
+        });
+
+        priceCurrency = price.currency;
+        amount = price.amount;
+      } catch {
+        // intentionally ignore
+      }
     }
-    const lineItem = subscription.lineItems?.[0];
-    if (!lineItem) {
-      throw new SubscriptionInactiveException();
-    }
-    const productId = lineItem.productId;
-    if (!productId) {
-      throw new SubscriptionProductIdMissingException();
-    }
-    const orderId = lineItem.latestSuccessfulOrderId ?? null;
-    const expiryTime = lineItem.expiryTime;
-    if (!expiryTime) {
-      throw new SubscriptionExpiryTimeMissingException();
-    }
-    const isAutoRenew = lineItem.autoRenewingPlan?.autoRenewEnabled ?? false;
-    const basePlanId = lineItem.offerDetails?.basePlanId ?? null;
-    const price = await this.getAndroidProductPrice({
-      productId,
-      basePlanId,
-    });
-    const startsAt = subscription.startTime
-      ? new Date(subscription.startTime)
-      : new Date();
-    const expiresAt = new Date(expiryTime);
+
     return {
       transaction: {
         orderId,
-        productId: productId as SubscriptionProductId,
+        productId,
         purchaseToken,
-        priceCurrency: price.currency,
-        amount: price.amount,
-        rawPayload: subscription,
+        priceCurrency,
+        amount,
+        rawPayload: purchase,
       },
       subscription: {
         platform: 'android',
-        productId: productId as SubscriptionProductId,
+        productId,
         purchaseToken,
         startsAt,
         expiresAt,
         isAutoRenew,
+        state: purchase.subscriptionState ?? null,
+        externalAccountId,
+        outOfAppPurchaseContext,
       },
     };
   }
 
-  async acknowledgeAndroidPurchase(purchaseToken: string): Promise<void> {
+  async acknowledgeAndroidPurchase(
+    purchaseToken: string,
+    productId: string,
+  ): Promise<void> {
     const { packageName } = this.configService.googleSubscriptionConfig();
+
     const data = await this.getGoogleSubscriptionInfo(
       packageName,
       purchaseToken,
     );
+
     if (data.acknowledgementState === 'ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED') {
       return;
     }
+
     await this.androidPublisher.purchases.subscriptions.acknowledge({
       packageName,
       token: purchaseToken,
+      subscriptionId: productId,
       requestBody: {},
     });
   }

@@ -8,10 +8,10 @@ import {
 export type Platform = 'android';
 
 export abstract class SubscriptionRepository {
-  abstract verify(
+  abstract getSubscriptionPurchase(
     platform: Platform,
     purchaseToken: string,
-  ): Promise<VerifySubscriptionResult<AndroidTransaction>>;
+  ): Promise<SubscriptionPurchaseResult<AndroidTransaction>>;
   abstract createSubscription(
     data: CreateSubscriptionData,
     manager?: any,
@@ -24,11 +24,10 @@ export abstract class SubscriptionRepository {
   abstract getSubscriptions(
     query?: FindSubscriptionsByQuery,
   ): Promise<TSubscription[]>;
-  abstract getGoogleSubscriptionInfo(
-    packageName: string,
-    token: string,
-  ): Promise<androidpublisher_v3.Schema$SubscriptionPurchaseV2>;
-  abstract acknowledgeAndroidPurchase(purchaseToken: string): Promise<void>;
+  abstract acknowledgeAndroidPurchase(
+    purchaseToken: string,
+    productId: string,
+  ): Promise<void>;
 }
 
 export interface FindSubscriptionsByQuery {
@@ -36,26 +35,33 @@ export interface FindSubscriptionsByQuery {
   purchaseToken?: string;
 }
 
-export type AndroidTransaction = {
-  orderId: string;
-  productId: SubscriptionProductId;
-  purchaseToken: string;
-  priceCurrency: string;
-  amount: number;
-  rawPayload: androidpublisher_v3.Schema$SubscriptionPurchaseV2;
-};
-
-export type VerifySubscriptionResult<TTransaction> = {
+export interface SubscriptionPurchaseResult<TTransaction> {
   transaction: TTransaction;
+
   subscription: {
-    platform: string;
-    productId: SubscriptionProductId;
+    platform: Platform;
+    productId: SubscriptionProductId | null;
     purchaseToken: string;
-    startsAt: Date;
-    expiresAt: Date;
-    isAutoRenew: boolean;
+    startsAt: Date | null;
+    expiresAt: Date | null;
+    isAutoRenew: boolean | null;
+    state: string | null;
+    externalAccountId: string | null;
+    outOfAppPurchaseContext: {
+      expiredPurchaseToken: string | null;
+      expiredExternalAccountId: string | null;
+    } | null;
   };
-};
+}
+
+export interface AndroidTransaction {
+  orderId: string | null;
+  productId: SubscriptionProductId | null;
+  purchaseToken: string;
+  priceCurrency: string | null;
+  amount: number | null;
+  rawPayload: androidpublisher_v3.Schema$SubscriptionPurchaseV2;
+}
 
 export interface CreateSubscriptionData {
   userId: string;

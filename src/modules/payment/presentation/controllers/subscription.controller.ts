@@ -25,7 +25,7 @@ export class SubscriptionController {
   async verifySubscription(
     @AuthPayload() authPayload: JwtPayload,
     @Body() verifySubscriptionBody: VerifySubscriptionBodyReqDto,
-  ) {
+  ): Promise<AppResponse> {
     return AppResponse.ok(
       await this.verifySubscriptionUsecase.execute(
         authPayload.userId,

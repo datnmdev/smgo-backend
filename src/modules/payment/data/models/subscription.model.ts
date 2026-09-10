@@ -34,9 +34,9 @@ export class SubscriptionModel {
 
   @Column('enum', {
     name: 'status',
-    enum: ['ACTIVE', 'CANCELED', 'EXPIRED', 'ON_HOLD', 'IN_GRACE_PERIOD'],
+    enum: ['ACTIVE', 'CANCELED', 'EXPIRED', 'ON_HOLD', 'IN_GRACE_PERIOD', 'PAUSED'],
   })
-  status: 'ACTIVE' | 'CANCELED' | 'EXPIRED' | 'IN_GRACE_PERIOD' | 'ON_HOLD';
+  status: 'ACTIVE' | 'CANCELED' | 'EXPIRED' | 'IN_GRACE_PERIOD' | 'ON_HOLD' | 'PAUSED';
 
   @ManyToOne(() => UserModel, (user) => user.subscriptions)
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
