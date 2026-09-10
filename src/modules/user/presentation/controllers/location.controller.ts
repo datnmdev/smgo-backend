@@ -126,19 +126,19 @@ export class LocationController {
       const html = await ejs.renderFile(shareLocationEjsPath, {
         orderMediaUrl:
           deliveryOrder.orderMediaUrl ??
-          `${baseUrl}/public/images/default-order.png`,
+          `${baseUrl}/api/public/images/default-order.png`,
         orderCode: deliveryOrder.orderCode,
         orderName: deliveryOrder.orderName,
         contactName: deliveryOrder.contactName,
         contactPhone: deliveryOrder.contactPhone,
         address: deliveryOrder.address,
-        logoUrl: `${baseUrl}/public/images/logo-text.png`,
-        splashUrl: `${baseUrl}/public/images/bg-splash.png`,
-        googleMapsIconUrl: `${baseUrl}/public/icons/google-maps.png`,
-        smGoMapsIconUrl: `${baseUrl}/public/icons/smgo-logo.png`,
+        logoUrl: `${baseUrl}/api/public/images/logo-text.png`,
+        splashUrl: `${baseUrl}/api/public/images/bg-splash.png`,
+        googleMapsIconUrl: `${baseUrl}/api/public/icons/google-maps.png`,
+        smGoMapsIconUrl: `${baseUrl}/api/public/icons/smgo-logo.png`,
         getSharedLocationUrl: `${baseUrl}/api/location/share?${queryParams.toString()}`,
         saveShareLocationUrl: `${baseUrl}/api/location/share?${queryParams.toString()}`,
-        shareLocationPreviewUrl: `${baseUrl}/public/images/share-location-preview.png`,
+        shareLocationPreviewUrl: `${baseUrl}/api/public/images/share-location-preview.png`,
         shareLocationUrl: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
       });
       return res.setHeader('Content-Type', 'text/html').send(html);
@@ -150,9 +150,9 @@ export class LocationController {
         'share-location-finished.ejs',
       );
       const html = await ejs.renderFile(shareLocationFinishedEjsPath, {
-        logoUrl: `${baseUrl}/public/images/logo-text.png`,
-        splashImgUrl: `${baseUrl}/public/images/bg-splash.png`,
-        shareLocationPreviewUrl: `${baseUrl}/public/images/share-location-preview.png`,
+        logoUrl: `${baseUrl}/api/public/images/logo-text.png`,
+        splashImgUrl: `${baseUrl}/api/public/images/bg-splash.png`,
+        shareLocationPreviewUrl: `${baseUrl}/api/public/images/share-location-preview.png`,
         shareLocationUrl: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
       });
       return res.setHeader('Content-Type', 'text/html').send(html);

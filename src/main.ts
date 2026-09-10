@@ -6,8 +6,7 @@ import morgan from 'morgan';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(morgan('dev'));
-  app.setGlobalPrefix('/api');
+  app.use(morgan('combined'));
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new GlobalExceptionFilter());
   await app.listen(process.env.SERVER_PORT, '0.0.0.0');
